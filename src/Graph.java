@@ -1,15 +1,6 @@
-/*
-You must NOT change the signatures of classes/methods in this skeleton file.
-You are required to implement the methods of this skeleton file according to the requirements.
-You are allowed to add classes, methods, and members as required.
- */
-
-import java.util.List;
-
 /**
  * This class represents a graph that efficiently maintains the heaviest neighborhood over edge addition and
  * vertex deletion.
- *
  */
 public class Graph {
     /**
@@ -104,16 +95,244 @@ public class Graph {
         }
     }
 
-    private class DLL<T> {
+    private class Vector<T> {
+        private final Object[] tArr;
+        private final int[] positions;
+        private final int[] legals;
+        private final int length;
+        private T defaultValue;
+        private int initValues;
 
-        private class DLLNode<T> {
+        private Vector(int n, T defaultValue) {
+            this.length = n;
+            this.tArr = new Object[n];
+            this.positions = new int[n];
+            this.legals = new int[n];
+            this.setDefaultValue(defaultValue);
+            this.setInitValues(0);
+        }
 
-            T value;
-            DLLNode<T> next;
-            DLLNode<T> prev;
+        private int getLength() {
+            return this.length;
+        }
 
-            private DLLNode(T value) {
+        private T getDefaultValue() {
+            return this.defaultValue;
+        }
+
+        private void setDefaultValue(T defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
+        private int getInitValues() {
+            return this.initValues;
+        }
+
+        private void setInitValues(int initValues) {
+            this.initValues = initValues;
+        }
+
+        private void incInitValues() {
+            this.setInitValues(this.getInitValues() + 1);
+        }
+
+        private void decInitValues() {
+            this.setInitValues(this.getInitValues() - 1);
+        }
+
+        private boolean checkIndexValidity(int index) {
+            return (index < this.getLength() && index >= 0);
+        }
+
+        private T get(int index) {
+            if (!this.checkIndexValidity(index)) {
+                throw new IndexOutOfBoundsException();
+            }
+            if (this.isInit(index)) {
+                @SuppressWarnings("unchecked")
+                final T value = (T)this.tArr[index];
+                return value;
+            }
+            return this.getDefaultValue();
+        }
+
+        private void set(T value, int index) {
+            if (this.checkIndexValidity(index)) {
+                this.tArr[index] = value;
+                if (!this.isInit(index)) {
+                    this.markInit(index);
+                }
+            }
+            else {
+                throw new IndexOutOfBoundsException();
+            }
+        }
+
+        private boolean isInit(int index) {
+            if (this.checkIndexValidity(index)) {
+                int position = this.positions[index];
+                if (0 <= position && position < this.getInitValues()) {
+                    int legal = this.legals[position];
+                    return legal == index;
+                }
+            }
+            return false;
+        }
+
+        private void markInit(int index) {
+            this.legals[this.getInitValues()] = index;
+            this.positions[index] = this.getInitValues();
+            this.incInitValues();
+        }
+    }
+
+    private class DoublyLinkedList<T> {
+
+        private DoublyLinkedListNode sentinel;
+        private int size;
+
+        private DoublyLinkedList() {
+            this.initSentinel();
+            this.setSize(0);
+        }
+
+        private void initSentinel() {
+            this.sentinel = new DoublyLinkedListNode(null, this);
+            this.sentinel.setNext(this.sentinel);
+            this.sentinel.setPrev(this.sentinel);
+        }
+
+        private DoublyLinkedListNode getSentinel() {
+            return this.sentinel;
+        }
+
+        private int getSize() {
+            return this.size;
+        }
+
+        private void setSize(int size) {
+            this.size = size;
+        }
+
+        private void incSize() {
+            this.setSize(this.getSize() + 1);
+        }
+
+        private void decSize() {
+            this.setSize(this.getSize() - 1);
+        }
+
+        private boolean checkIndexValidity(int index) {
+            return index < this.getSize() && index >= 0;
+        }
+
+        private DoublyLinkedListNode getNode(T value) {
+            DoublyLinkedListNode sentinel = this.getSentinel();
+            DoublyLinkedListNode node = sentinel.getNext();
+            while (node != sentinel) {
+                if (value.equals(node.getValue())) {
+                    return node;
+                }
+                node = node.getNext();
+            }
+            return null;
+        }
+
+        private DoublyLinkedListNode getNode(int index) {
+            if (this.checkIndexValidity(index)) {
+                return null;
+            }
+            DoublyLinkedListNode sentinel = this.getSentinel();
+            DoublyLinkedListNode node = sentinel.getNext();
+            for (int i = 0; i < index; i++) {
+                node = node.getNext();
+            }
+            return node;
+        }
+
+        private DoublyLinkedListNode insertFirst(T value) {
+            DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
+            this.insertFirst(node);
+            return node;
+        }
+
+        private void insertFirst(DoublyLinkedListNode node) {
+            this.insertAfter(node, this.sentinel);
+        }
+
+        private DoublyLinkedListNode insertLast(T value) {
+            DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
+            this.insertLast(node);
+            return node;
+        }
+
+        private void insertLast(DoublyLinkedListNode node) {
+            this.insertAfter(node, this.sentinel.getPrev());
+        }
+
+        private DoublyLinkedListNode insertAfter(T value, int index) {
+            if (this.checkIndexValidity(index)) {
+                DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
+                this.insertAfter(node, index);
+                return node;
+            }
+            return null;
+        }
+
+        private void insertAfter(DoublyLinkedListNode node, int index) {
+            if (this.checkIndexValidity(index)) {
+                DoublyLinkedListNode prev = this.getNode(index);
+                this.insertAfter(node, prev);
+            }
+        }
+        
+        private void insertAfter(DoublyLinkedListNode node, DoublyLinkedListNode prev) {
+            DoublyLinkedListNode next = prev.getNext();
+            next.setPrev(node);
+            prev.setNext(node);
+            node.setPrev(prev);
+            node.setNext(next);
+            this.incSize();
+        }
+
+        private void deleteFirst() {
+            this.deleteNode(this.getSentinel().getNext());
+        }
+
+        private void deleteLast() {
+            this.deleteNode(this.getSentinel().getPrev());
+        }
+
+        private void deleteNode(T value) {
+            DoublyLinkedListNode node = this.getNode(value);
+            this.deleteNode(node);
+        }
+
+        private void deleteNode(int index) {
+            DoublyLinkedListNode node = this.getNode(index);
+            this.deleteNode(node);
+        }
+
+        private void deleteNode(DoublyLinkedListNode node) {
+            if (node != null && node.getParentList() == this && node != this.getSentinel()) {
+                DoublyLinkedListNode next = node.getNext();
+                DoublyLinkedListNode prev = node.getPrev();
+                prev.setNext(next);
+                next.setPrev(prev);
+                this.decSize();
+            }
+        }
+
+        private class DoublyLinkedListNode {
+
+            private T value;
+            private DoublyLinkedList<T> parentList;
+            private DoublyLinkedListNode next;
+            private DoublyLinkedListNode prev;
+
+            private DoublyLinkedListNode(T value, DoublyLinkedList<T> parentList) {
                 this.setValue(value);
+                this.setParentList(parentList);
             }
 
             private T getValue() {
@@ -124,25 +343,29 @@ public class Graph {
                 this.value = value;
             }
 
-            private DLLNode<T> getNext() {
+            private DoublyLinkedList<T> getParentList() {
+                return this.parentList;
+            }
+
+            private void setParentList(DoublyLinkedList<T> parentList) {
+                this.parentList = parentList;
+            }
+
+            private DoublyLinkedListNode getNext() {
                 return this.next;
             }
             
-            private void setNext(DLLNode<T> next) {
+            private void setNext(DoublyLinkedListNode next) {
                 this.next = next;
             }
 
-            private DLLNode<T> getPrev() {
+            private DoublyLinkedListNode getPrev() {
                 return this.prev;
             }
 
-            private void setPrev(DLLNode<T> prev) {
+            private void setPrev(DoublyLinkedListNode prev) {
                 this.prev = prev;
             }
-
-
         }
     }
 }
-
-
