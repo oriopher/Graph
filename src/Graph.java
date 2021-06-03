@@ -1,3 +1,5 @@
+import java.util.Comparator;
+
 /**
  * This class represents a graph that efficiently maintains the heaviest neighborhood over edge addition and
  * vertex deletion.
@@ -95,6 +97,31 @@ public class Graph {
         }
     }
 
+    private interface BinaryHeapSelfPointer {
+        public int getIndex();
+
+        public int setIndex(int index);
+    }
+
+    private class BinaryHeap<T> {
+        private final Comparator<T> cmp;
+        private final Vector<T> heap;
+
+        private BinaryHeap(Vector<T> array, Comparator<T> cmp) {
+            this.cmp = cmp;
+            this.heap = array;
+            this.heapifyArray();
+        }
+
+        private void heapifyArray() {
+
+        }
+
+        private void deleteNode(int index) {
+
+        }
+    }
+
     private class Vector<T> {
         private final Object[] tArr;
         private final int[] positions;
@@ -103,11 +130,11 @@ public class Graph {
         private T defaultValue;
         private int initValues;
 
-        private Vector(int n, T defaultValue) {
-            this.length = n;
-            this.tArr = new Object[n];
-            this.positions = new int[n];
-            this.legals = new int[n];
+        private Vector(int size, T defaultValue) {
+            this.length = size;
+            this.tArr = new Object[size];
+            this.positions = new int[size];
+            this.legals = new int[size];
             this.setDefaultValue(defaultValue);
             this.setInitValues(0);
         }
@@ -191,7 +218,7 @@ public class Graph {
         private DoublyLinkedListNode sentinel;
         private int size;
 
-        private DoublyLinkedList() {
+        public DoublyLinkedList() {
             this.initSentinel();
             this.setSize(0);
         }
@@ -206,7 +233,7 @@ public class Graph {
             return this.sentinel;
         }
 
-        private int getSize() {
+        public int getSize() {
             return this.size;
         }
 
@@ -250,7 +277,7 @@ public class Graph {
             return node;
         }
 
-        private DoublyLinkedListNode insertFirst(T value) {
+        public DoublyLinkedListNode insertFirst(T value) {
             DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
             this.insertFirst(node);
             return node;
@@ -260,7 +287,7 @@ public class Graph {
             this.insertAfter(node, this.sentinel);
         }
 
-        private DoublyLinkedListNode insertLast(T value) {
+        public DoublyLinkedListNode insertLast(T value) {
             DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
             this.insertLast(node);
             return node;
@@ -270,7 +297,7 @@ public class Graph {
             this.insertAfter(node, this.sentinel.getPrev());
         }
 
-        private DoublyLinkedListNode insertAfter(T value, int index) {
+        public DoublyLinkedListNode insertAfter(T value, int index) {
             if (this.checkIndexValidity(index)) {
                 DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
                 this.insertAfter(node, index);
@@ -295,20 +322,20 @@ public class Graph {
             this.incSize();
         }
 
-        private void deleteFirst() {
+        public void deleteFirst() {
             this.deleteNode(this.getSentinel().getNext());
         }
 
-        private void deleteLast() {
+        public void deleteLast() {
             this.deleteNode(this.getSentinel().getPrev());
         }
 
-        private void deleteNode(T value) {
+        public void deleteNode(T value) {
             DoublyLinkedListNode node = this.getNode(value);
             this.deleteNode(node);
         }
 
-        private void deleteNode(int index) {
+        public void deleteNode(int index) {
             DoublyLinkedListNode node = this.getNode(index);
             this.deleteNode(node);
         }
@@ -323,7 +350,7 @@ public class Graph {
             }
         }
 
-        private class DoublyLinkedListNode {
+        public class DoublyLinkedListNode {
 
             private T value;
             private DoublyLinkedList<T> parentList;
@@ -335,7 +362,7 @@ public class Graph {
                 this.setParentList(parentList);
             }
 
-            private T getValue() {
+            public T getValue() {
                 return this.value;
             }
 
@@ -343,7 +370,7 @@ public class Graph {
                 this.value = value;
             }
 
-            private DoublyLinkedList<T> getParentList() {
+            public DoublyLinkedList<T> getParentList() {
                 return this.parentList;
             }
 
@@ -351,7 +378,7 @@ public class Graph {
                 this.parentList = parentList;
             }
 
-            private DoublyLinkedListNode getNext() {
+            public DoublyLinkedListNode getNext() {
                 return this.next;
             }
             
@@ -359,7 +386,7 @@ public class Graph {
                 this.next = next;
             }
 
-            private DoublyLinkedListNode getPrev() {
+            public DoublyLinkedListNode getPrev() {
                 return this.prev;
             }
 
