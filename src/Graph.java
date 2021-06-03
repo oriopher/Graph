@@ -1,5 +1,3 @@
-import java.util.Comparator;
-
 /**
  * This class represents a graph that efficiently maintains the heaviest neighborhood over edge addition and
  * vertex deletion.
@@ -11,16 +9,17 @@ public class Graph {
      *
      * @param nodes - an array of node objects
      */
-    public Graph(Node [] nodes){
+    public Graph(Node[] nodes) {
         //TODO: implement this method.
     }
 
     /**
      * This method returns the node in the graph with the maximum neighborhood weight.
      * Note: nodes that have been removed from the graph using deleteNode are no longer in the graph.
+     *
      * @return a Node object representing the correct node. If there is no node in the graph, returns 'null'.
      */
-    public Node maxNeighborhoodWeight(){
+    public Node maxNeighborhoodWeight() {
         //TODO: implement this method.
         return null;
     }
@@ -32,7 +31,7 @@ public class Graph {
      * @return the neighborhood weight of the node of id 'node_id' if such a node exists in the graph.
      * Otherwise, the function returns -1.
      */
-    public int getNeighborhoodWeight(int node_id){
+    public int getNeighborhoodWeight(int node_id) {
         //TODO: implement this method.
         return 0;
     }
@@ -47,7 +46,7 @@ public class Graph {
      * @param node2_id - the id of the second node.
      * @return returns 'true' if the function added an edge, otherwise returns 'false'.
      */
-    public boolean addEdge(int node1_id, int node2_id){
+    public boolean addEdge(int node1_id, int node2_id) {
         //TODO: implement this method.
         return false;
     }
@@ -58,7 +57,7 @@ public class Graph {
      * @param node_id - the id of the node to delete.
      * @return returns 'true' if the function deleted a node, otherwise returns 'false'
      */
-    public boolean deleteNode(int node_id){
+    public boolean deleteNode(int node_id) {
         //TODO: implement this method.
         return false;
     }
@@ -67,48 +66,166 @@ public class Graph {
     /**
      * This class represents a node in the graph.
      */
-    public class Node{
+    public class Node {
         /**
          * Creates a new node object, given its id and its weight.
-         * @param id - the id of the node.
+         *
+         * @param id     - the id of the node.
          * @param weight - the weight of the node.
          */
-        public Node(int id, int weight){
+        public Node(int id, int weight) {
             //TODO: implement this method.
             return;
         }
 
         /**
          * Returns the id of the node.
+         *
          * @return the id of the node.
          */
-        public int getId(){
+        public int getId() {
             //TODO: implement this method.
             return 0;
         }
 
         /**
          * Returns the weight of the node.
+         *
          * @return the weight of the node.
          */
-        public int getWeight(){
+        public int getWeight() {
             //TODO: implement this method.
             return 0;
         }
     }
 
-    private interface BinaryHeapSelfPointer {
-        public int getIndex();
+    private class ModularHashFunction implements HashFunction<Integer> {
 
-        public int setIndex(int index);
+        private final int a;
+        private final int b;
+        private final int p;
+
+        private ModularHashFunction(int p) {
+            this.p = p;
+            this.a = 0;
+            this.b = 0;
+        }
+
+        @Override
+        public int getHash(Integer elem) {
+            return 0;
+        }
     }
 
-    private class BinaryHeap<T> {
-        private final Comparator<T> cmp;
+    private interface HashFunction<T> {
+        public int getHash(T elem);
+    }
+
+    private class HashTable<K, V> {
+        private final Vector<DoublyLinkedList<HashTableNode>> table;
+        private final HashFunction<K> hashFunction;
+        private final int m;
+
+        private HashTable(int tableSize, HashFunction<K> hashFunction) {
+            this.m = tableSize;
+            this.hashFunction = hashFunction;
+            this.table = null;
+        }
+
+        private void insert(K key, V value) {
+
+        }
+
+        private void delete(K key) {
+
+        }
+
+        private V get(K key){
+            return null;
+        }
+
+        private class HashTableNode {
+            private final K key;
+            private V value;
+
+            private HashTableNode(K key, V value) {
+                this.key = key;
+                this.value = value;
+            }
+        }
+    }
+
+    private class ExtendedNode implements BinaryHeapSelfPointer, Comparable<ExtendedNode> {
+
+        private int heapIndex;
+        private final Node node;
+        private final DoublyLinkedList<NeighbouringNodes> neighbours;
+
+        private ExtendedNode(Node node) {
+            this.node = node;
+            this.neighbours = new DoublyLinkedList<>();
+        }
+
+        @Override
+        public int getHeapPointer() {
+            return 0;
+        }
+
+        @Override
+        public int setHeapPointer(int index) {
+            return 0;
+        }
+
+        @Override
+        public int compareTo(ExtendedNode o) {
+            return 0;
+        }
+
+        private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode addNeighbour(NeighbouringNodes neighbours) {
+            return null;
+        }
+
+        private void deleteNeighbour(NeighbouringNodes neighbours) {
+
+        }
+    }
+
+    private class NeighbouringNodes {
+        private ExtendedNode node1;
+        private ExtendedNode node2;
+        private DoublyLinkedList<ExtendedNode>.DoublyLinkedListNode pointer1;
+        private DoublyLinkedList<ExtendedNode>.DoublyLinkedListNode pointer2;
+
+        private NeighbouringNodes(ExtendedNode node1, ExtendedNode node2) {
+            this.node1 = node1;
+            this.node2 = node2;
+            this.pointer1 = null;
+            this.pointer2 = null;
+        }
+
+        private DoublyLinkedList<ExtendedNode>.DoublyLinkedListNode getNeighbourNodePointer(ExtendedNode node) {
+            return null;
+        }
+
+        private ExtendedNode getNeighbourNode(ExtendedNode node) {
+            return null;
+        }
+
+        private void setPointer(ExtendedNode node) {
+
+        }
+    }
+
+    private interface BinaryHeapSelfPointer {
+        public int getHeapPointer();
+
+        public int setHeapPointer(int index);
+    }
+
+    private class BinaryHeap<T extends Comparable<T> & BinaryHeapSelfPointer> {
         private final Vector<T> heap;
 
-        private BinaryHeap(Vector<T> array, Comparator<T> cmp) {
-            this.cmp = cmp;
+        private BinaryHeap(Vector<T> array) {
             this.heap = array;
             this.heapifyArray();
         }
@@ -117,7 +234,15 @@ public class Graph {
 
         }
 
-        private void deleteNode(int index) {
+        private void deleteNode(T elem) {
+
+        }
+
+        private T getRoot() {
+            return null;
+        }
+
+        private void updateElementPos(T elem) {
 
         }
     }
