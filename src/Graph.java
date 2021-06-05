@@ -253,51 +253,94 @@ public class Graph {
         private final Object[] tArr;
         private final int[] positions;
         private final int[] legals;
-        private final int length;
+        private final int size;
         private T defaultValue;
-        private int initValues;
+        private int initValuesCount;
 
+        /**
+         * Initialize a vector with all the cells initialized to the same value.
+         * @param size - The size of the vector.
+         * @param defaultValue - The initial value of all the cells.
+         * @complexity - O(1)
+         */
         private Vector(int size, T defaultValue) {
-            this.length = size;
+            this.size = size;
             this.tArr = new Object[size];
             this.positions = new int[size];
             this.legals = new int[size];
             this.setDefaultValue(defaultValue);
-            this.setInitValues(0);
+            this.setInitValuesCount(0);
         }
 
-        private int getLength() {
-            return this.length;
+        /**
+         * Get the amout of cells in the vector.
+         * @return - The amount of cells in the vector.
+         * @complexity - O(1)
+         */
+        private int getSize() {
+            return this.size;
         }
 
+        /**
+         * Get the default value of all the non initialized cells.
+         * @return - Default value of a cell in the vector.
+         * @complexity - O(1)
+         */
         private T getDefaultValue() {
             return this.defaultValue;
         }
 
+        /**
+         * Set the default value of all the non initialized cells.
+         * @param defaultValue - Default value of a cell in the vector.
+         * @complexity - O(1)
+         */
         private void setDefaultValue(T defaultValue) {
             this.defaultValue = defaultValue;
         }
 
-        private int getInitValues() {
-            return this.initValues;
+        /**
+         * Get the amount of initialized values in the vector.
+         * @return - The amount of initialized values in the vector.
+         * @complexity - O(1)
+         */
+        private int getInitValuesCount() {
+            return this.initValuesCount;
         }
 
-        private void setInitValues(int initValues) {
-            this.initValues = initValues;
+        /**
+         * Set the amount of initialized values in the vector.
+         * @param initValuesCount - The amount of initialized values in the vector.
+         * @complexity - O(1)
+         */
+        private void setInitValuesCount(int initValuesCount) {
+            this.initValuesCount = initValuesCount;
         }
 
+        /**
+         * Increment the amount of initialized values in the vector.
+         * @complexity - O(1)
+         */
         private void incInitValues() {
-            this.setInitValues(this.getInitValues() + 1);
+            this.setInitValuesCount(this.getInitValuesCount() + 1);
         }
 
-        private void decInitValues() {
-            this.setInitValues(this.getInitValues() - 1);
-        }
-
+        /**
+         * Check the validity of an index relative to the vector.
+         * @param index - The index to check its validity.
+         * @return - If the index is valid return true, otherwise false.
+         * @complexity - O(1)
+         */
         private boolean checkIndexValidity(int index) {
-            return (index < this.getLength() && index >= 0);
+            return (index < this.getSize() && index >= 0);
         }
 
+        /**
+         * Get the element in the vector at a specified index.
+         * @param index - The index of the element to get.
+         * @return - The value of the vector at the index.
+         * @complexity - O(1)
+         */
         private T get(int index) {
             if (!this.checkIndexValidity(index)) {
                 throw new IndexOutOfBoundsException();
@@ -310,6 +353,12 @@ public class Graph {
             return this.getDefaultValue();
         }
 
+        /**
+         * Set the value of an element in the vector at a specified index.
+         * @param value - The value to store in the vector.
+         * @param index - The index to store the value in the vector.
+         * @complexity - O(1)
+         */
         private void set(T value, int index) {
             if (this.checkIndexValidity(index)) {
                 this.tArr[index] = value;
@@ -322,10 +371,16 @@ public class Graph {
             }
         }
 
+        /**
+         * Checks if a cell in the vector is initialized.
+         * @param index - Index of cell to check.
+         * @return - Returns true if cell was previously initialize, otherwise false.
+         * @complexity - O(1)
+         */
         private boolean isInit(int index) {
             if (this.checkIndexValidity(index)) {
                 int position = this.positions[index];
-                if (0 <= position && position < this.getInitValues()) {
+                if (0 <= position && position < this.getInitValuesCount()) {
                     int legal = this.legals[position];
                     return legal == index;
                 }
@@ -333,9 +388,14 @@ public class Graph {
             return false;
         }
 
+        /**
+         * Mark a cell as initialized.
+         * @param index - The cell to mark as initialized.
+         * @complexity - O(1)
+         */
         private void markInit(int index) {
-            this.legals[this.getInitValues()] = index;
-            this.positions[index] = this.getInitValues();
+            this.legals[this.getInitValuesCount()] = index;
+            this.positions[index] = this.getInitValuesCount();
             this.incInitValues();
         }
     }
