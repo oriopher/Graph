@@ -343,41 +343,82 @@ public class Graph {
         private DoublyLinkedListNode sentinel;
         private int size;
 
+        /**
+         * Initialize an empty list
+         * @complexity - O(1)
+         */
         public DoublyLinkedList() {
             this.initSentinel();
             this.setSize(0);
         }
 
+        /**
+         * Initialize the sentinel of the list
+         * @complexity - O(1)
+         */
         private void initSentinel() {
             this.sentinel = new DoublyLinkedListNode(null, this);
             this.sentinel.setNext(this.sentinel);
             this.sentinel.setPrev(this.sentinel);
         }
 
+        /**
+         * Get the sentinel of the list
+         * @return - Sentinel of list
+         * @complexity - O(1)
+         */
         private DoublyLinkedListNode getSentinel() {
             return this.sentinel;
         }
 
+        /**
+         * Get the amount of elements in the list.
+         * @return - The size of the list.
+         * @complexity - O(1)
+         */
         public int getSize() {
             return this.size;
         }
 
+        /**
+         * Sets the amount of elements in the list.
+         * @param size - The new size of the list.
+         * @complexity - O(1)
+         */
         private void setSize(int size) {
             this.size = size;
         }
 
+        /**
+         * Increase the amount of elements in the list by 1.
+         * @complexity - O(1)
+         */
         private void incSize() {
             this.setSize(this.getSize() + 1);
         }
 
+        /**
+         * Decrease the amount of elements in the list by 1.
+         * @complexity - O(1)
+         */
         private void decSize() {
             this.setSize(this.getSize() - 1);
         }
 
+        /**
+         * Checks the validity of an index relativly to the list size.
+         * @complexity - O(1)
+         */
         private boolean checkIndexValidity(int index) {
             return index < this.getSize() && index >= 0;
         }
 
+        /**
+         * Get the first node in the list that contains the value.
+         * @param value - value to get its node
+         * @return - If value exists than retuns the node, otherwise null.
+         * @complexity - O(n)
+         */
         private DoublyLinkedListNode getNode(T value) {
             DoublyLinkedListNode sentinel = this.getSentinel();
             DoublyLinkedListNode node = sentinel.getNext();
@@ -390,6 +431,12 @@ public class Graph {
             return null;
         }
 
+        /**
+         * Get the node at a specific index.
+         * @param index - The index of the required node.
+         * @return - The node of the index if valid, otherwise null.
+         * @complexity - O(index)
+         */
         private DoublyLinkedListNode getNode(int index) {
             if (this.checkIndexValidity(index)) {
                 return null;
@@ -402,26 +449,55 @@ public class Graph {
             return node;
         }
 
+        /**
+         * Insert a value as the first entry in the list.
+         * @param value - Value to insert.
+         * @return - Node which contains the value.
+         * @complexity - O(1)
+         */
         public DoublyLinkedListNode insertFirst(T value) {
             DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
             this.insertFirst(node);
             return node;
         }
 
+        /**
+         * Insert a node as a first entry in the list.
+         * @param node - Node to insert first.
+         * @complexity - O(1)
+         */
         private void insertFirst(DoublyLinkedListNode node) {
             this.insertAfter(node, this.sentinel);
         }
 
+        /**
+         * Insert a value as the last entry in the list.
+         * @param value - Value to insert.
+         * @return - Node which contains the value.
+         * @complexity - O(1)
+         */
         public DoublyLinkedListNode insertLast(T value) {
             DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
             this.insertLast(node);
             return node;
         }
 
+        /**
+         * Insert a node as the last entry in the list.
+         * @param node - Node to insert last.
+         * @complexity - O(1)
+         */
         private void insertLast(DoublyLinkedListNode node) {
             this.insertAfter(node, this.sentinel.getPrev());
         }
 
+        /**
+         * Insert a value to the list after an index. If index is invalid, then does nothing.
+         * @param value - Value to insert.
+         * @param index - The index after which to insert the value.
+         * @return - Node which contains the inserted value.
+         * @complexity - O(n)
+         */
         public DoublyLinkedListNode insertAfter(T value, int index) {
             if (this.checkIndexValidity(index)) {
                 DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
@@ -431,6 +507,12 @@ public class Graph {
             return null;
         }
 
+        /**
+         * Insert a node to the list after an index. If index is invalid, then does nothing.
+         * @param node - Node to insert.
+         * @param index - The index after which to insert the node.
+         * @complexity - O(n)
+         */
         private void insertAfter(DoublyLinkedListNode node, int index) {
             if (this.checkIndexValidity(index)) {
                 DoublyLinkedListNode prev = this.getNode(index);
@@ -438,6 +520,12 @@ public class Graph {
             }
         }
         
+        /**
+         * Insert a node to the list after a specified node.
+         * @param node - Node to insert.
+         * @param prev - Node after which the new node will be inserted.
+         * @complexity - O(1)
+         */
         private void insertAfter(DoublyLinkedListNode node, DoublyLinkedListNode prev) {
             DoublyLinkedListNode next = prev.getNext();
             next.setPrev(node);
@@ -447,24 +535,49 @@ public class Graph {
             this.incSize();
         }
 
+        /**
+         * Delete the first value in the list. If list is empty then does nothing.
+         * @complexity - O(1)
+         */
         public void deleteFirst() {
             this.deleteNode(this.getSentinel().getNext());
         }
 
+        /**
+         * Delete the last value in the list. If list is empty then does nothing.
+         * @complexity - O(1)
+         */
         public void deleteLast() {
             this.deleteNode(this.getSentinel().getPrev());
         }
 
+        /**
+         * Delete the first node with a specific value.
+         * If the list doesn't contain the value, does nothing.
+         * @param value - Value to delete from the list.
+         * @complexity - O(n)
+         */
         public void deleteNode(T value) {
             DoublyLinkedListNode node = this.getNode(value);
             this.deleteNode(node);
         }
 
+        /**
+         * Delete the node at a specified location.
+         * If location is invalid, then does nothing.
+         * @param index - Index at which to delete the node.
+         * @complexity - O(n)
+         */
         public void deleteNode(int index) {
             DoublyLinkedListNode node = this.getNode(index);
             this.deleteNode(node);
         }
 
+        /**
+         * Delete a node from the list.
+         * @param node - Node to delete from the list.
+         * @complexity - O(1)
+         */
         private void deleteNode(DoublyLinkedListNode node) {
             if (node != null && node.getParentList() == this && node != this.getSentinel()) {
                 DoublyLinkedListNode next = node.getNext();
