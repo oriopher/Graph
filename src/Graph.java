@@ -1,3 +1,5 @@
+import java.util.function.Function;
+
 /**
  * This class represents a graph that efficiently maintains the heaviest neighborhood over edge addition and
  * vertex deletion.
@@ -435,16 +437,23 @@ public class Graph {
          * Get the node at a specific index.
          * @param index - The index of the required node.
          * @return - The node of the index if valid, otherwise null.
-         * @complexity - O(index)
+         * @complexity - O(min{index, n-index})
          */
         private DoublyLinkedListNode getNode(int index) {
             if (this.checkIndexValidity(index)) {
                 return null;
             }
-            DoublyLinkedListNode sentinel = this.getSentinel();
-            DoublyLinkedListNode node = sentinel.getNext();
-            for (int i = 0; i < index; i++) {
-                node = node.getNext();
+            int reverseIndex = this.getSize() - 1 - index;
+            Function<DoublyLinkedListNode, DoublyLinkedListNode> func;
+            if (index <= reverseIndex) {
+                func = ((currentNode) -> (currentNode.getNext()));
+            }
+            else {
+                func = ((currentNode) -> (currentNode.getPrev()));
+            }
+            DoublyLinkedListNode node = func.apply(this.getSentinel());
+            for (int i = 0; i < Math.min(index, reverseIndex); i++) {
+                node = func.apply(node);
             }
             return node;
         }
@@ -496,7 +505,7 @@ public class Graph {
          * @param value - Value to insert.
          * @param index - The index after which to insert the value.
          * @return - Node which contains the inserted value.
-         * @complexity - O(n)
+         * @complexity - O(min{index, n-index})
          */
         public DoublyLinkedListNode insertAfter(T value, int index) {
             if (this.checkIndexValidity(index)) {
@@ -511,7 +520,7 @@ public class Graph {
          * Insert a node to the list after an index. If index is invalid, then does nothing.
          * @param node - Node to insert.
          * @param index - The index after which to insert the node.
-         * @complexity - O(n)
+         * @complexity - O(min{index, n-index})
          */
         private void insertAfter(DoublyLinkedListNode node, int index) {
             if (this.checkIndexValidity(index)) {
@@ -566,7 +575,7 @@ public class Graph {
          * Delete the node at a specified location.
          * If location is invalid, then does nothing.
          * @param index - Index at which to delete the node.
-         * @complexity - O(n)
+         * @complexity - O(min{index, n-index})
          */
         public void deleteNode(int index) {
             DoublyLinkedListNode node = this.getNode(index);
@@ -595,39 +604,85 @@ public class Graph {
             private DoublyLinkedListNode next;
             private DoublyLinkedListNode prev;
 
+            /**
+             * Initialize a new node.
+             * @param value - The value which the node contains.
+             * @param parentList - The list in which the node is contained.
+             * @complexity - O(1)
+             */
             private DoublyLinkedListNode(T value, DoublyLinkedList<T> parentList) {
                 this.setValue(value);
                 this.setParentList(parentList);
             }
 
+            /**
+             * Get the value which the node contains.
+             * @return - The value which the node contains.
+             * @complexity - O(1)
+             */
             public T getValue() {
                 return this.value;
             }
 
+            /**
+             * Set the value which the node contains.
+             * @param value - The new value which the node will contain.
+             * @complexity - O(1)
+             */
             private void setValue(T value) {
                 this.value = value;
             }
 
+            /**
+             * Get the list in which the node is contained.
+             * @return - The list in which the node is contained.
+             * @complexity - O(1)
+             */
             public DoublyLinkedList<T> getParentList() {
                 return this.parentList;
             }
 
+            /**
+             * Set the list in which the node is contained.
+             * @param parentList - The list in which the node is contained.
+             * @complexity - O(1)
+             */
             private void setParentList(DoublyLinkedList<T> parentList) {
                 this.parentList = parentList;
             }
 
+            /**
+             * Get the next node in the list after this node.
+             * @return - The node in the list which is after this node.
+             * @complexity - O(1)
+             */
             public DoublyLinkedListNode getNext() {
                 return this.next;
             }
             
+            /**
+             * Set the next node in the list after this node.
+             * @param next - The node in the list which is after this node.
+             * @complexity - O(1)
+             */
             private void setNext(DoublyLinkedListNode next) {
                 this.next = next;
             }
 
+            /**
+             * Get the previous node in the list before this node.
+             * @return - The previous node in the list which is before this node.
+             * @complexity - O(1)
+             */
             public DoublyLinkedListNode getPrev() {
                 return this.prev;
             }
 
+            /**
+             * Set the previous node in the list before this node.
+             * @param prev - The previous node in the list which is before this node.
+             * @complexity - O(1)
+             */
             private void setPrev(DoublyLinkedListNode prev) {
                 this.prev = prev;
             }
