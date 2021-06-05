@@ -274,7 +274,7 @@ public class Graph {
          * Increment the amount of initialized values in the vector.
          * @complexity - O(1)
          */
-        private void incInitValues() {
+        private void incInitValuesCount() {
             this.setInitValuesCount(this.getInitValuesCount() + 1);
         }
 
@@ -349,7 +349,7 @@ public class Graph {
         private void markInit(int index) {
             this.legals[this.getInitValuesCount()] = index;
             this.positions[index] = this.getInitValuesCount();
-            this.incInitValues();
+            this.incInitValuesCount();
         }
     }
 
