@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.function.Function;
 
 public class Graph {
@@ -26,19 +27,45 @@ public class Graph {
     }
 
     public class Node {
+        private final int id;
+        private int weight;
+
+        /**
+         * Initialize a new node with an id and weight.
+         * @param id - The ID of the node.
+         * @param weight - The weight of the node.
+         * @complexity - O(1)
+         */
         public Node(int id, int weight) {
-            //TODO: implement this method.
-            return;
+            this.id = id;
+            this.setWeight(weight);
         }
 
+        /**
+         * Return the ID of the node.
+         * @return - ID of the node.
+         * @complexity - O(1)
+         */
         public int getId() {
-            //TODO: implement this method.
-            return 0;
+            return this.id;
         }
 
+        /**
+         * Set the weight of the node.
+         * @param weight - The weight of the node.
+         * @complexity - O(1)
+         */
+        public void setWeight(int weight) {
+            this.weight = weight;
+        }
+
+        /**
+         * Get the weight of the node.
+         * @return - The weight of the node.
+         * @complexity - O(1)
+         */
         public int getWeight() {
-            //TODO: implement this method.
-            return 0;
+            return this.weight;
         }
     }
 
@@ -66,7 +93,7 @@ public class Graph {
         public int getHash(T elem);
     }
 
-    private class HashTable<K, V> {
+    private class HashTable<K, V> implements Iterable<K> {
         private final Vector<DoublyLinkedList<HashTableNode>> table;
         private final HashFunction<K> hashFunction;
         private final int m;
@@ -91,6 +118,15 @@ public class Graph {
             return null;
         }
 
+        /**
+         * Create an iterator to iterate over all the keys in the table.
+         * @return - Iterator over all keys in the table.
+         * @complexity - O(1)
+         */
+        public Iterator<K> iterator() {
+            return null;
+        }
+
         private class HashTableNode {
             private final K key;
             private V value;
@@ -105,48 +141,135 @@ public class Graph {
     private class ExtendedNode implements BinaryHeapSelfPointer, Comparable<ExtendedNode> {
 
         private int heapIndex;
+        private int totalWeight;
         private final Node node;
-        private final DoublyLinkedList<NeighbouringNodes> neighbours;
+        private final DoublyLinkedList<NeighbouringNodes> neighboursList;
 
+        /**
+         * Initialize an extended node that wraps a node and adds functionality.
+         * @param node - Wrapped node.
+         * @complexity - O(1)
+         */
         private ExtendedNode(Node node) {
-            //TODO: implement this method.
             this.node = node;
-            this.neighbours = new DoublyLinkedList<>();
+            this.neighboursList = new DoublyLinkedList<>();
+            this.setHeapPointer(-1);
         }
 
+        /**
+         * Get the index of the element in the binery heap.
+         * @return Index of the element in the binary heap.
+         * @complexity - O(1)
+         */
         @Override
         public int getHeapPointer() {
-            //TODO: implement this method.
-            return 0;
+            return this.heapIndex;
         }
 
+        /**
+         * Set the index of the element in the binary heap.
+         * @param index - Index of the element in the binary heap.
+         * @complexity - O(1)
+         */
         @Override
-        public int setHeapPointer(int index) {
-            //TODO: implement this method.
-            return 0;
+        public void setHeapPointer(int index) {
+            this.heapIndex = index;
         }
 
+        /**
+         * Get the weight of the node.
+         * @return - The weight of the node.
+         * @complexity - O(1)
+         */
+        private int getWeight() {
+            return this.node.getWeight();
+        }
+
+        /**
+         * Set the weight of the node.
+         * @param weight - The weight of the node.
+         * @complexity - O(1)
+         */
+        private void setWeight(int weight) {
+            this.node.setWeight(weight);
+        }
+
+        /**
+         * Get the sum of the weight of the node and its neighbours' weight.
+         * @return - Sum of the weight of the node and its neighbours' weight.
+         * @complexity - O(1)
+         */
+        private int getTotalWeight() {
+            return this.totalWeight;
+        }
+
+        /**
+         * Set the sum of the weight of the node and its neighbours' weight.
+         * @param totalWeight - Sum of the weight of the node and its neighbours' weight.
+         * @complexity - O(1)
+         */
+        private void setTotalWeight(int totalWeight) {
+            this.totalWeight = totalWeight;
+        }
+
+        /**
+         * Increse the total weight of the node.
+         * @param inc - Amount to increse.
+         * @complexity - O(1)
+         */
+        private void incTotalWeight(int inc) {
+            this.setTotalWeight(this.getTotalWeight() + inc);
+        }
+
+        /**
+         * Decrease the total weight of the node.
+         * @param dec - Amount to decrease/
+         * @complexity - O(1)
+         */
+        private void decTotalWeight(int dec) {
+            this.setTotalWeight(this.getTotalWeight() - dec);
+        }
+
+        /**
+         * Compare between two ExtendedNodes based on total weight from higher to lower.
+         * @other - Other node to compare to.
+         * @complexity - O(1)
+         */
         @Override
-        public int compareTo(ExtendedNode o) {
-            //TODO: implement this method.
-            return 0;
+        public int compareTo(ExtendedNode other) {
+            return Integer.compare(other.getTotalWeight(), this.getTotalWeight());
         }
 
+        /**
+         * Add the neighbouring relationsheep between two nodes.
+         * @param neighbours - Representation of this node and other node being neighbours.
+         * @return - Pointer to the neighbours list node to this relation.
+         * @complexity - O(1)
+         */
         private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode addNeighbour(NeighbouringNodes neighbours) {
-            //TODO: implement this method.
-            return null;
+            DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode listNode = this.neighboursList.insertFirst(neighbours);
+            ExtendedNode other = neighbours.getNeighbourNode(this);
+            this.incTotalWeight(other.getWeight());
+            return listNode;
         }
 
+        /**
+         * Remove the neighbouring relationsheep between two nodes.
+         * @param neighbours - Representation of this node and other node being neighbours.
+         * @complexity - O(1)
+         */
         private void deleteNeighbour(NeighbouringNodes neighbours) {
-            //TODO: implement this method.
+            DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode listNode = neighbours.getNodePointer(this);
+            this.neighboursList.deleteNode(listNode);
+            this.decTotalWeight(neighbours.getNeighbourNode(this).getWeight());
         }
     }
 
     private class NeighbouringNodes {
-        private ExtendedNode node1;
-        private ExtendedNode node2;
-        private DoublyLinkedList<ExtendedNode>.DoublyLinkedListNode pointer1;
-        private DoublyLinkedList<ExtendedNode>.DoublyLinkedListNode pointer2;
+        private final ExtendedNode node1;
+        private final ExtendedNode node2;
+        private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode pointer1;
+        private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode pointer2;
 
         private NeighbouringNodes(ExtendedNode node1, ExtendedNode node2) {
             this.node1 = node1;
@@ -155,7 +278,12 @@ public class Graph {
             this.pointer2 = null;
         }
 
-        private DoublyLinkedList<ExtendedNode>.DoublyLinkedListNode getNeighbourNodePointer(ExtendedNode node) {
+        private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode getNodePointer(ExtendedNode node) {
+            //TODO: implement this method.
+            return null;
+        }
+
+        private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode getNeighbourNodePointer(ExtendedNode node) {
             //TODO: implement this method.
             return null;
         }
@@ -165,15 +293,23 @@ public class Graph {
             return null;
         }
 
-        private void setPointer(ExtendedNode node) {
+        private void setPointer(ExtendedNode node, DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode pointer) {
             //TODO: implement this method.
         }
     }
 
     private interface BinaryHeapSelfPointer {
+        /**
+         * Get the index of the element in the binery heap.
+         * @return Index of the element in the binary heap.
+         */
         public int getHeapPointer();
 
-        public int setHeapPointer(int index);
+        /**
+         * Set the index of the element in the binary heap.
+         * @param index - Index of the element in the binary heap.
+         */
+        public void setHeapPointer(int index);
     }
 
     private class BinaryHeap<T extends Comparable<T> & BinaryHeapSelfPointer> {
