@@ -138,7 +138,7 @@ public class Graph {
         }
     }
 
-    private class ExtendedNode implements BinaryHeapSelfPointer, Comparable<ExtendedNode> {
+    private class ExtendedNode implements BinaryHeapSelfIndex, Comparable<ExtendedNode> {
 
         private int heapIndex;
         private int totalWeight;
@@ -153,7 +153,7 @@ public class Graph {
         private ExtendedNode(Node node) {
             this.node = node;
             this.neighboursList = new DoublyLinkedList<>();
-            this.setHeapPointer(-1);
+            this.setHeapIndex(-1);
         }
 
         /**
@@ -162,7 +162,7 @@ public class Graph {
          * @complexity - O(1)
          */
         @Override
-        public int getHeapPointer() {
+        public int getHeapIndex() {
             return this.heapIndex;
         }
 
@@ -172,7 +172,7 @@ public class Graph {
          * @complexity - O(1)
          */
         @Override
-        public void setHeapPointer(int index) {
+        public void setHeapIndex(int index) {
             this.heapIndex = index;
         }
 
@@ -298,43 +298,234 @@ public class Graph {
         }
     }
 
-    private interface BinaryHeapSelfPointer {
+    private interface BinaryHeapSelfIndex {
         /**
          * Get the index of the element in the binery heap.
-         * @return Index of the element in the binary heap.
+         * @return - Index of the element in the binary heap.
          */
-        public int getHeapPointer();
+        public int getHeapIndex();
 
         /**
          * Set the index of the element in the binary heap.
          * @param index - Index of the element in the binary heap.
          */
-        public void setHeapPointer(int index);
+        public void setHeapIndex(int index);
     }
 
-    private class BinaryHeap<T extends Comparable<T> & BinaryHeapSelfPointer> {
+    private class BinaryHeap<T extends Comparable<T> & BinaryHeapSelfIndex> {
         private final Vector<T> heap;
+        private int elementsCount;
 
         private BinaryHeap(Vector<T> array) {
             this.heap = array;
+            this.setElementsCount(this.heap.getSize());
             this.heapifyArray();
         }
 
+        /**
+         * Get the amount of elements in the heap.
+         * @return - Amount of elements in the heap.
+         * @complexity - O(1)
+         */
+        private int getElementsCount() {
+            return this.elementsCount;
+        }
+
+        /**
+         * Set the amount of elements in the heap.
+         * @param elementsCount - Amount of elements in the heap.
+         * @complexity - O(1)
+         */
+        private void setElementsCount(int elementsCount) {
+            this.elementsCount = elementsCount;
+        }
+
+        /**
+         * Decrement the amount of elements in the heap by 1.
+         * @complexity - O(1)
+         */
+        private void decElementsCount() {
+            this.setElementsCount(this.getElementsCount() - 1);
+        }
+
+        /**
+         * Get the index of the node's parent.
+         * @param nodeIndex - The index of the node.
+         * @return - The index of the node's parent. If this is the root, return -1.
+         * @complexity - O(1)
+         */
+        private int getParentIndex(int nodeIndex) {
+            return this.getParentIndexRebaseRoot(nodeIndex, 0);
+        }
+
+        /**
+         * Get the index of the node's parent, while taking only a subset of the heap.
+         * @param nodeIndex - The index of the node.
+         * @param rootIndex - The index of the root in the subset heap.
+         * @return - The index of the node's parent. If this is the root, return -1.
+         * @complexity - O(1)
+         */
+        private int getParentIndexRebaseRoot(int nodeIndex, int rootIndex) {
+            if (nodeIndex > rootIndex) {
+                nodeIndex += 1;
+                int parentIndex = (int)Math.floor((double)nodeIndex/2) - 1;
+                if (parentIndex >= rootIndex) {
+                    return parentIndex;
+                }
+            }
+            return -1;
+        }
+
+        /**
+         * Get the index of the node's left child.
+         * @param nodeIndex - The index of the node.
+         * @return - The index of the node's left child. If the node doesn't have a left child, return -1.
+         * @complexity - O(1)
+         */
+        private int getLeftChildIndex(int nodeIndex) {
+            nodeIndex += 1;
+            int leftIndex = 2*nodeIndex - 1;
+            if (leftIndex < this.getElementsCount()) {
+                return leftIndex;
+            }
+            return -1;
+        }
+
+        /**
+         * Get the index of the node's right child.
+         * @param nodeIndex - The index of the node.
+         * @return - The index of the node's right child. If the node doesn't have a right child, return -1.
+         * @complexity - O(1)
+         */
+        private int getRightChildIndex(int nodeIndex) {
+            nodeIndex += 1;
+            int rightIndex = 2*nodeIndex;
+            if (rightIndex < this.getElementsCount()) {
+                return rightIndex;
+            }
+            return -1;
+        }
+
         private void heapifyArray() {
-            //TODO: implement this method.
+            for (int i = this.getElementsCount() - 1; i >= 0; i--) {
+                this.bubbleDown(i);
+            }
         }
 
         private void deleteNode(T elem) {
-            //TODO: implement this method.
+            int index = elem.getHeapIndex();
+            this.deleteNode(index);
+        }
+
+        private void deleteNode(int index) {
+            int lastElementIndex = this.getElementsCount() - 1;
+            this.heap.set(this.heap.get(lastElementIndex), index);
+            this.updateElementPos(index);
+            this.decElementsCount();
         }
 
         private T getRoot() {
-            //TODO: implement this method.
+            if (this.getElementsCount() > 0) {
+                return this.heap.get(0);
+            }
             return null;
         }
 
         private void updateElementPos(T elem) {
-            //TODO: implement this method.
+            int index = elem.getHeapIndex();
+            updateElementPos(index);
+        }
+
+        private void updateElementPos(int index) {
+            this.updateElementPosRebaseRoot(index, 0);
+        }
+
+        private void updateElementPosRebaseRoot(int index, int rootIndex) {
+            if (!isLegal(this.getParentIndexRebaseRoot(index, rootIndex), index)) {
+                this.bubbleUp(index);
+            }
+            else if (!(isLegal(index, this.getLeftChildIndex(index)) && isLegal(index, getRightChildIndex(index)))) {
+                this.bubbleDown(index);
+            }
+        }
+
+        /**
+         * Checks if the realtionsheep between parent and child in heap satisfies the order relationsheep.
+         * @param parentIndex - Index of parent node.
+         * @param childIndex - Index of child node.
+         * @return - True if the relationsheep between parent and child is correct, otherwise false.
+         * @complexity - O(1)
+         */
+        private boolean isLegal(int parentIndex, int childIndex) {
+            if (parentIndex == -1 && childIndex == -1) {
+                return true;
+            }
+            return this.heap.get(parentIndex).compareTo(this.heap.get(childIndex)) <= 0;
+        }
+
+        private int getMinIndex(int index1, int index2) {
+            int cmp = this.heap.get(index1).compareTo(this.heap.get(index2));
+            if (cmp >= 0) {
+                return index2;
+            }
+            return index1;
+        }
+
+        private void bubbleUp(int index) {
+            this.bubbleUpRebaseRoot(index, 0);
+        }
+
+        private void bubbleUpRebaseRoot(int index, int rootIndex) {
+            int parentIndex;
+            while (index > rootIndex) {
+                parentIndex = this.getParentIndexRebaseRoot(index, rootIndex);
+                if (singleBubbleUp(index, parentIndex, rootIndex) == index) {
+                    break;
+                }
+                index = parentIndex;
+            }
+        }
+
+        private int singleBubbleUp(int childIndex, int parentIndex, int rootIndex) {
+            if (isLegal(parentIndex, childIndex)) {
+                return childIndex;
+            }
+            this.changeHeapNodes(childIndex, parentIndex);
+            return parentIndex;
+        }
+
+        private void bubbleDown(int index) {
+            int leftChildIndex;
+            int rightChildIndex;
+            int newIndex;
+            int elementsCount = this.getElementsCount();
+            while (index < elementsCount) {
+                leftChildIndex = this.getLeftChildIndex(index);
+                rightChildIndex = this.getRightChildIndex(index);
+                newIndex = singleBubbleDown(index, leftChildIndex, rightChildIndex);
+                if (index == newIndex) {
+                    break;
+                }
+                index = newIndex;
+            }
+        }
+
+        private int singleBubbleDown(int parentIndex, int leftChildIndex, int rightChildIndex) {
+            if (!(isLegal(parentIndex, leftChildIndex) && isLegal(parentIndex, rightChildIndex))) {
+                int minChildIndex = this.getMinIndex(leftChildIndex, rightChildIndex);
+                this.changeHeapNodes(parentIndex, minChildIndex);
+                return minChildIndex;
+            }
+            return parentIndex;
+        }
+
+        private void changeHeapNodes(int index1, int index2) {
+            T element1 = this.heap.get(index1);
+            T element2 = this.heap.get(index2);
+            this.heap.set(element1, index2);
+            this.heap.set(element2, index1);
+            element1.setHeapIndex(index2);
+            element2.setHeapIndex(index1);
         }
     }
 
