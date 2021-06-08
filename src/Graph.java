@@ -38,7 +38,7 @@ public class Graph {
          */
         public Node(int id, int weight) {
             this.id = id;
-            this.setWeight(weight);
+            this.weight = weight;
         }
 
         /**
@@ -48,15 +48,6 @@ public class Graph {
          */
         public int getId() {
             return this.id;
-        }
-
-        /**
-         * Set the weight of the node.
-         * @param weight - The weight of the node.
-         * @complexity - O(1)
-         */
-        public void setWeight(int weight) {
-            this.weight = weight;
         }
 
         /**
@@ -154,6 +145,7 @@ public class Graph {
             this.node = node;
             this.neighboursList = new DoublyLinkedList<>();
             this.setHeapIndex(-1);
+            this.setTotalWeight(node.getWeight());
         }
 
         /**
@@ -183,15 +175,6 @@ public class Graph {
          */
         private int getWeight() {
             return this.node.getWeight();
-        }
-
-        /**
-         * Set the weight of the node.
-         * @param weight - The weight of the node.
-         * @complexity - O(1)
-         */
-        private void setWeight(int weight) {
-            this.node.setWeight(weight);
         }
 
         /**
@@ -416,6 +399,9 @@ public class Graph {
          * @complexity - O(n)
          */
         private void heapifyArray() {
+            for (int i = 0; i < this.getElementsCount(); i++) {
+                this.heap.get(i).setHeapIndex(i);
+            }
             for (int i = this.getElementsCount() - 1; i >= 0; i--) {
                 this.bubbleDown(i);
             }
