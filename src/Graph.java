@@ -316,6 +316,11 @@ public class Graph {
         private final Vector<T> heap;
         private int elementsCount;
 
+        /**
+         * Initialize a binary heap from an array.
+         * @param array - An array to initialize a heap.
+         * @complexity - O(n)
+         */
         private BinaryHeap(Vector<T> array) {
             this.heap = array;
             this.setElementsCount(this.heap.getSize());
@@ -406,24 +411,44 @@ public class Graph {
             return -1;
         }
 
+        /**
+         * While initializing a heap, make the array into a valid heap.
+         * @complexity - O(n)
+         */
         private void heapifyArray() {
             for (int i = this.getElementsCount() - 1; i >= 0; i--) {
                 this.bubbleDown(i);
             }
         }
 
+        /**
+         * Delete an element from the heap.
+         * @param elem - Element to delete from the heap.
+         * @complexity - O(log n)
+         */
         private void deleteNode(T elem) {
             int index = elem.getHeapIndex();
             this.deleteNode(index);
         }
 
+        /**
+         * Delete a node in a specified index.
+         * @param index - The index of the node to delete.
+         * @complexity - O(log n)
+         */
         private void deleteNode(int index) {
             int lastElementIndex = this.getElementsCount() - 1;
             this.heap.set(this.heap.get(lastElementIndex), index);
-            this.updateElementPos(index);
+            this.heap.set(null, lastElementIndex);
             this.decElementsCount();
+            this.updateElementPos(index);
         }
 
+        /**
+         * Get the root element in the heap.
+         * @return Root element in the heap.
+         * @complexity - O(1)
+         */
         private T getRoot() {
             if (this.getElementsCount() > 0) {
                 return this.heap.get(0);
@@ -431,18 +456,37 @@ public class Graph {
             return null;
         }
 
+        /**
+         * Decide if an element is in the correct location in the heap, and if not, perform either a
+         * bubble up or bubble down operation, according to which is required.
+         * @param elem - The element to update its location in the heap.
+         * @complexity - O(log n)
+         */
         private void updateElementPos(T elem) {
             int index = elem.getHeapIndex();
             updateElementPos(index);
         }
 
+        /**
+         * Decide if a node is in the correct location in the heap, and if not, perform either a bubble
+         * up or bubble down operation, according to which is required.
+         * @param index - The index of the node in question.
+         * @complexity - O(log n)
+         */
         private void updateElementPos(int index) {
             this.updateElementPosRebaseRoot(index, 0);
         }
 
+        /**
+         * Decide if a node is in the correct location in a sub-heap, and if not, perform either a bubble
+         * up or bubble down operation, according to which is required.
+         * @param index - The index of the node in question.
+         * @param rootIndex - The index of the sub-heap root index.
+         * @complexity - O(log n)
+         */
         private void updateElementPosRebaseRoot(int index, int rootIndex) {
             if (!isLegal(this.getParentIndexRebaseRoot(index, rootIndex), index)) {
-                this.bubbleUp(index);
+                this.bubbleUpRebaseRoot(index, rootIndex);
             }
             else if (!(isLegal(index, this.getLeftChildIndex(index)) && isLegal(index, getRightChildIndex(index)))) {
                 this.bubbleDown(index);
@@ -460,21 +504,42 @@ public class Graph {
             if (parentIndex == -1 && childIndex == -1) {
                 return true;
             }
-            return this.heap.get(parentIndex).compareTo(this.heap.get(childIndex)) <= 0;
+            return this.getMinIndex(parentIndex, childIndex) == parentIndex;
         }
 
+        /**
+         * Compare between two values in the heap, and check according to their order relation
+         * which is minimal.
+         * @param index1 - Index of a node to check.
+         * @param index2 - Index of other node to check.
+         * @return - Index of the minimal node according to the order relation. If both are of the same
+         * order, return index1.
+         */
         private int getMinIndex(int index1, int index2) {
             int cmp = this.heap.get(index1).compareTo(this.heap.get(index2));
-            if (cmp >= 0) {
+            if (cmp < 0) {
                 return index2;
             }
             return index1;
         }
 
+        /**
+         * Perform a bubble up operation of a node in the heap, from current
+         * location to correct location in the heap.
+         * @param index - The index of the node to perform the bubble up on.
+         * @complexity - O(log n)
+         */
         private void bubbleUp(int index) {
             this.bubbleUpRebaseRoot(index, 0);
         }
 
+        /**
+         * Perform a bubble up operation of a node in a sub-heap, from current
+         * location to correct location in the heap.
+         * @param index - The index of the node to perform the bubble up on.
+         * @param rootIndex - The root index of the sub-heap.
+         * @complexity - O(log n)
+         */
         private void bubbleUpRebaseRoot(int index, int rootIndex) {
             int parentIndex;
             while (index > rootIndex) {
@@ -486,6 +551,14 @@ public class Graph {
             }
         }
 
+        /**
+         * Perform a single bubble up operation on a node in a sub-heap, if required.
+         * @param childIndex - The index of the node 
+         * @param parentIndex - The parent index of the node.
+         * @param rootIndex - The index of the sub-heap root.
+         * @return - The new index of the node.
+         * @complexity - O(1)
+         */
         private int singleBubbleUp(int childIndex, int parentIndex, int rootIndex) {
             if (isLegal(parentIndex, childIndex)) {
                 return childIndex;
@@ -494,6 +567,12 @@ public class Graph {
             return parentIndex;
         }
 
+        /**
+         * Perform a bubble down operation of a node in the heap, from current
+         * location to correct location in the heap.
+         * @param index - The index of the node to perform the bubble down on.
+         * @complexity - O(log n)
+         */
         private void bubbleDown(int index) {
             int leftChildIndex;
             int rightChildIndex;
@@ -510,15 +589,30 @@ public class Graph {
             }
         }
 
+        /**
+         * Perform a single bubble down operation between a node and its children, if required.
+         * @param parentIndex - The index of the node in question.
+         * @param leftChildIndex - The index of the node's left child.
+         * @param rightChildIndex - The index of the node's right child.
+         * @return - The new index of the node.
+         * @complexity - O(1)
+         */
         private int singleBubbleDown(int parentIndex, int leftChildIndex, int rightChildIndex) {
             if (!(isLegal(parentIndex, leftChildIndex) && isLegal(parentIndex, rightChildIndex))) {
-                int minChildIndex = this.getMinIndex(leftChildIndex, rightChildIndex);
+                int minChildIndex = rightChildIndex != -1 ?
+                                    this.getMinIndex(leftChildIndex, rightChildIndex) : leftChildIndex;
                 this.changeHeapNodes(parentIndex, minChildIndex);
                 return minChildIndex;
             }
             return parentIndex;
         }
 
+        /**
+         * Switch between the values of two cells in the array representing the heap.
+         * @param index1 - The index of the first element.
+         * @param index2 - The index of the second element.
+         * @complexity - O(1)
+         */
         private void changeHeapNodes(int index1, int index2) {
             T element1 = this.heap.get(index1);
             T element2 = this.heap.get(index2);
@@ -626,8 +720,9 @@ public class Graph {
                 throw new IndexOutOfBoundsException();
             }
             if (this.isInit(index)) {
+                Object valueOptinal = this.tArr[index];
                 @SuppressWarnings("unchecked")
-                final T value = (T)this.tArr[index];
+                T value = valueOptinal != null ? (T)valueOptinal : null;
                 return value;
             }
             return this.getDefaultValue();
