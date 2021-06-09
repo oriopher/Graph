@@ -1,4 +1,6 @@
 import java.util.Iterator;
+import java.util.Objects;
+import java.util.Random;
 import java.util.function.Function;
 
 public class Graph {
@@ -66,17 +68,26 @@ public class Graph {
         private final int b;
         private final int p;
 
+        /**
+         * Initialize a Modular Hash Function instance.
+         * @param p - the prime number that is the upper limit for our integer keys for hashing.
+         * @complexity - O(1)
+         */
         private ModularHashFunction(int p) {
-            //TODO: implement this method.
+            Random rand = new Random();
             this.p = p;
-            this.a = 0;
-            this.b = 0;
+            this.a = rand.nextInt(p-1)+1;
+            this.b = rand.nextInt(p);
         }
 
+        /**
+         * Get the result of using the hash function on a given element.
+         * @param elem - the element to hash.
+         * @return - the hash function result for elem.
+         */
         @Override
         public int getHash(Integer elem) {
-            //TODO: implement this method.
-            return 0;
+            return (this.a*elem + this.b)%this.p;
         }
     }
 
@@ -86,26 +97,56 @@ public class Graph {
 
     private class HashTable<K, V> implements Iterable<K> {
         private final Vector<DoublyLinkedList<HashTableNode>> table;
+
+
         private final HashFunction<K> hashFunction;
         private final int m;
 
+
+        private HashFunction<K> getHashFunction() {
+            return this.hashFunction;
+        }
+
+        private int getM() {
+            return this.m;
+        }
+
+        private DoublyLinkedList<HashTableNode> getChain(K key) {
+            int hash = getHashFunction().getHash(key);
+            return this.table.get(hash);
+        }
+
         private HashTable(int tableSize, HashFunction<K> hashFunction) {
-            //TODO: implement this method.
             this.m = tableSize;
             this.hashFunction = hashFunction;
-            this.table = null;
+            this.table = new Vector<>(tableSize, new DoublyLinkedList<>());
+        }
+
+        private DoublyLinkedList<HashTableNode>.DoublyLinkedListNode getNode(K key) {
+            DoublyLinkedList<HashTableNode> chain = getChain(key);
+            HashTableNode node = new HashTableNode(key);
+            return chain.getNode(node);
         }
 
         private void insert(K key, V value) {
-            //TODO: implement this method.
+            DoublyLinkedList<HashTableNode>.DoublyLinkedListNode chainNode = getNode(key);
+            if (chainNode == null) {
+                getChain(key).insertLast(new HashTableNode(key, value));
+            }
         }
 
         private void delete(K key) {
-            //TODO: implement this method.
+            DoublyLinkedList<HashTableNode>.DoublyLinkedListNode chainNode = getNode(key);
+            if (chainNode != null) {
+                getChain(key).deleteNode(chainNode);
+            }
         }
 
         private V get(K key){
-            //TODO: implement this method.
+            DoublyLinkedList<HashTableNode>.DoublyLinkedListNode chainNode = getNode(key);
+            if (chainNode != null) {
+                return chainNode.getValue().getValue();
+            }
             return null;
         }
 
@@ -122,9 +163,25 @@ public class Graph {
             private final K key;
             private V value;
 
+            private K getKey() {
+                return key;
+            }
+
+            private V getValue() {
+                return value;
+            }
+
+            private void setValue(V value) {
+                this.value = value;
+            }
+
             private HashTableNode(K key, V value) {
                 this.key = key;
                 this.value = value;
+            }
+
+            private HashTableNode(K key) {
+                this.key = key;
             }
         }
     }
@@ -254,6 +311,7 @@ public class Graph {
         private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode pointer1;
         private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode pointer2;
 
+
         private NeighbouringNodes(ExtendedNode node1, ExtendedNode node2) {
             this.node1 = node1;
             this.node2 = node2;
@@ -262,22 +320,32 @@ public class Graph {
         }
 
         private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode getNodePointer(ExtendedNode node) {
-            //TODO: implement this method.
-            return null;
+            if (node.equals(this.node1))  {
+                return this.pointer1;
+            }
+            return this.pointer2;
         }
 
         private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode getNeighbourNodePointer(ExtendedNode node) {
-            //TODO: implement this method.
-            return null;
+            if (node.equals(this.node1))  {
+                return this.pointer2;
+            }
+            return this.pointer1;
         }
 
         private ExtendedNode getNeighbourNode(ExtendedNode node) {
-            //TODO: implement this method.
-            return null;
+            if (node.equals(this.node1))  {
+                return this.node2;
+            }
+            return this.node1;
         }
 
         private void setPointer(ExtendedNode node, DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode pointer) {
-            //TODO: implement this method.
+            if (node.equals(this.node1))  {
+                this.pointer1 = pointer;
+            } else {
+                this.pointer2 = pointer;
+            }
         }
     }
 
