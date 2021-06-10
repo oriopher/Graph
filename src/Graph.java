@@ -634,7 +634,9 @@ public class Graph {
             this.heap.set(this.heap.get(lastElementIndex), index);
             this.heap.set(null, lastElementIndex);
             this.decElementsCount();
-            this.updateElementPos(index);
+            if (this.getElementsCount() != 0) {
+                this.updateElementPos(index);
+            }
         }
 
         /**
