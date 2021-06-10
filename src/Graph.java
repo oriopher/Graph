@@ -4,6 +4,9 @@ import java.util.Random;
 import java.util.function.Function;
 
 public class Graph {
+
+    private static int P = (int) (Math.pow(10, 9) + 9);
+
     public Graph(Node[] nodes) {
         //TODO: implement this method.
     }
@@ -112,7 +115,7 @@ public class Graph {
         }
 
         private DoublyLinkedList<HashTableNode> getChain(K key) {
-            int hash = getHashFunction().getHash(key);
+            int hash = getHashFunction().getHash(key)%getM();
             return this.table.get(hash);
         }
 
@@ -165,6 +168,17 @@ public class Graph {
             private void setValue(V value) {
                 this.value = value;
             }
+
+            @Override
+            public boolean equals(Object o) {
+                HashTableNode node;
+                if (o instanceof HashTable.HashTableNode) {
+                    node = (HashTableNode) o;
+                    return getKey().equals(node.getKey());
+                }
+                return false;
+            }
+
 
             private HashTableNode(K key, V value) {
                 this.key = key;
