@@ -1225,6 +1225,10 @@ public class Graph {
             }
         }
 
+        /**
+         * Return an iterator over the elements in the list.
+         * @complexity - O(1)
+         */
         @Override
         public Iterator<T> iterator() {
             return new DoublyLinkedListIterator(this.sentinel);
@@ -1326,16 +1330,28 @@ public class Graph {
             DoublyLinkedListNode sentinel;
             DoublyLinkedListNode next;
 
+            /**
+             * Initialize an iterator over a doubly linked list.
+             * @param sentinel - Sentinel of the list to iterate.
+             */
             private DoublyLinkedListIterator(DoublyLinkedListNode sentinel) {
                 this.sentinel = sentinel;
                 this.next = sentinel.getNext();
             }
 
+            /**
+             * Check if there is another element in the list to return.
+             * @complexity - O(1)
+             */
             @Override
             public boolean hasNext() {
                 return this.sentinel != this.next;
             }
-
+            
+            /**
+             * Return the next item in the doubly linked list.
+             * @complexity - O(1)
+             */
             @Override
             public T next() {
                 DoublyLinkedListNode current = this.next;
