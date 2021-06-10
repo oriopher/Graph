@@ -208,13 +208,18 @@ public class Graph {
 
         private DoublyLinkedList<HashTableNode> getChain(K key) {
             int hash = Math.floorMod(getHashFunction().getHash(key),getM());
-            return this.table.get(hash);
+            DoublyLinkedList<HashTableNode> chain = this.table.get(hash);
+            if (chain == null) {
+                chain = new DoublyLinkedList<>();
+                this.table.set(chain, hash);
+            }
+            return chain;
         }
 
         private HashTable(int tableSize, HashFunction<K> hashFunction) {
             this.m = tableSize;
             this.hashFunction = hashFunction;
-            this.table = new Vector<>(tableSize, new DoublyLinkedList<>());
+            this.table = new Vector<>(tableSize, null);
         }
 
         private DoublyLinkedList<HashTableNode>.DoublyLinkedListNode getNode(K key) {
