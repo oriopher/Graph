@@ -95,7 +95,7 @@ public class Graph {
         public int getHash(T elem);
     }
 
-    private class HashTable<K, V> implements Iterable<K> {
+    private class HashTable<K, V> {
         private final Vector<DoublyLinkedList<HashTableNode>> table;
 
 
@@ -147,15 +147,6 @@ public class Graph {
             if (chainNode != null) {
                 return chainNode.getValue().getValue();
             }
-            return null;
-        }
-
-        /**
-         * Create an iterator to iterate over all the keys in the table.
-         * @return - Iterator over all keys in the table.
-         * @complexity - O(1)
-         */
-        public Iterator<K> iterator() {
             return null;
         }
 
