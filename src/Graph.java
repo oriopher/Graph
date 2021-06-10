@@ -5,33 +5,125 @@ import java.util.function.Function;
 
 public class Graph {
 
-    private static int P = (int) (Math.pow(10, 9) + 9);
+    private static final int P = (int) (Math.pow(10, 9) + 9);
+
+    private final BinaryHeap<ExtendedNode> heap;
+    private final HashTable<Integer, ExtendedNode> table;
+
+    private int numNodes;
+    private int numEdges;
 
     public Graph(Node[] nodes) {
-        //TODO: implement this method.
+        Vector<ExtendedNode> extendedNodes = nodesToExtendedNodes(nodes);
+        int n = nodes.length;
+        this.heap = new BinaryHeap<>(extendedNodes);
+        this.table = new HashTable<>(n, new ModularHashFunction(P));
+        this.initTable(extendedNodes);
+        this.setNumEdges(0);
+        this.setNumNodes(n);
+    }
+
+    private Vector<ExtendedNode> nodesToExtendedNodes(Node[] nodes) {
+        int n = nodes.length;
+        ExtendedNode extendedNode;
+        Vector<ExtendedNode> extendedNodes = new Vector<>(n, null);
+        for (int i = 0; i < n; i++) {
+            extendedNode = new ExtendedNode(nodes[i]);
+            extendedNodes.set(extendedNode, i);
+        }
+        return extendedNodes;
+    }
+
+    private void initTable(Vector<ExtendedNode> nodes) {
+        ExtendedNode node;
+        for (int i = 0; i < nodes.getSize(); i++) {
+            node = nodes.get(i);
+            this.table.insert(node.getId(), node);
+        }
     }
 
     public Node maxNeighborhoodWeight() {
-        //TODO: implement this method.
-        return null;
+        ExtendedNode node = this.heap.getRoot();
+        if (node == null) {
+            return null;
+        }
+        return node.getNode();
     }
 
     public int getNeighborhoodWeight(int node_id) {
-        //TODO: implement this method.
-        return 0;
+        ExtendedNode node = this.table.get(node_id);
+        if (node == null) {
+            return -1;
+        }
+        return node.getTotalWeight();
     }
 
     public boolean addEdge(int node1_id, int node2_id) {
-        //TODO: implement this method.
-        return false;
+        ExtendedNode node1 = this.table.get(node1_id);
+        ExtendedNode node2 = this.table.get(node2_id);
+        if (node1 == null || node2 == null) {
+            return false;
+        }
+        NeighbouringNodes neighbours = new NeighbouringNodes(node1, node2);
+        this.addNeighbour(node1, neighbours);
+        this.addNeighbour(node2, neighbours);
+        this.incNumEdges();
+        return true;
+    }
+
+    private void addNeighbour(ExtendedNode node, NeighbouringNodes neighbours) {
+        DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode nodePointer = node.addNeighbour(neighbours);
+        this.heap.updateElementPos(node);
+        neighbours.setPointer(node, nodePointer);
     }
 
     public boolean deleteNode(int node_id) {
-        //TODO: implement this method.
-        return false;
+        ExtendedNode node = this.table.get(node_id);
+        if (node == null) {
+            return false;
+        }
+        ExtendedNode other;
+        for (NeighbouringNodes neighbours : node.getNeighboursList()) {
+            other = neighbours.getNeighbourNode(node);
+            other.deleteNeighbour(neighbours);
+            this.heap.updateElementPos(other);
+            this.decNumEdges();
+        }
+        this.heap.deleteNode(node);
+        this.table.delete(node.getId());
+        this.decNumNodes();
+        return true;
     }
 
-    public class Node {
+    public int getNumNodes() {
+        return this.numNodes;
+    }
+
+    private void setNumNodes(int numNodes) {
+        this.numNodes = numNodes;
+    }
+
+    private void decNumNodes() {
+        this.setNumNodes(this.getNumNodes() - 1);
+    }
+
+    public int getNumEdges() {
+        return this.numEdges;
+    }
+
+    private void setNumEdges(int numEdges) {
+        this.numEdges = numEdges;
+    }
+
+    private void incNumEdges() {
+        this.setNumEdges(this.getNumEdges() + 1);
+    }
+
+    private void decNumEdges() {
+        this.setNumEdges(this.getNumEdges() - 1);
+    }
+
+    public static class Node {
         private final int id;
         private int weight;
 
@@ -231,12 +323,30 @@ public class Graph {
         }
 
         /**
+         * Get the ID of the node.
+         * @return - The ID of the node.
+         * @complexity - O(1)
+         */
+        private int getId() {
+            return this.node.getId();
+        }
+
+        /**
          * Get the weight of the node.
          * @return - The weight of the node.
          * @complexity - O(1)
          */
         private int getWeight() {
             return this.node.getWeight();
+        }
+
+        /**
+         * Get the wrapped node.
+         * @return - The wrapped node.
+         * @complexity - O(1)
+         */
+        private Node getNode() {
+            return this.node;
         }
 
         /**
@@ -275,6 +385,16 @@ public class Graph {
             this.setTotalWeight(this.getTotalWeight() - dec);
         }
 
+        
+        /**
+         * Get a list of the node's neighbours.
+         * @return List of the node's neighbours.
+         * @complexity - O(1)
+         */
+        private DoublyLinkedList<NeighbouringNodes> getNeighboursList() {
+            return this.neighboursList;
+        }
+
         /**
          * Compare between two ExtendedNodes based on total weight from higher to lower.
          * @other - Other node to compare to.
@@ -307,6 +427,20 @@ public class Graph {
             DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode listNode = neighbours.getNodePointer(this);
             this.neighboursList.deleteNode(listNode);
             this.decTotalWeight(neighbours.getNeighbourNode(this).getWeight());
+        }
+
+        /**
+         * Decide if two nodes are the same based on their names.
+         * @param o - Other node to compare to
+         * @complexity - O(1)
+         */
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof ExtendedNode) {
+                ExtendedNode other = (ExtendedNode)o;
+                return this.getId() == other.getId();
+            }
+            return false;
         }
     }
 
@@ -834,7 +968,7 @@ public class Graph {
         }
     }
 
-    private class DoublyLinkedList<T> {
+    private class DoublyLinkedList<T> implements Iterable<T> {
 
         private DoublyLinkedListNode sentinel;
         private int size;
@@ -1091,6 +1225,11 @@ public class Graph {
             }
         }
 
+        @Override
+        public Iterator<T> iterator() {
+            return new DoublyLinkedListIterator(this.sentinel);
+        }
+
         public class DoublyLinkedListNode {
 
             private T value;
@@ -1179,6 +1318,29 @@ public class Graph {
              */
             private void setPrev(DoublyLinkedListNode prev) {
                 this.prev = prev;
+            }
+        }
+
+        private class DoublyLinkedListIterator implements Iterator<T> {
+
+            DoublyLinkedListNode sentinel;
+            DoublyLinkedListNode next;
+
+            private DoublyLinkedListIterator(DoublyLinkedListNode sentinel) {
+                this.sentinel = sentinel;
+                this.next = sentinel.getNext();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return this.sentinel != this.next;
+            }
+
+            @Override
+            public T next() {
+                DoublyLinkedListNode current = this.next;
+                this.next = current.getNext();
+                return current.getValue();
             }
         }
     }
