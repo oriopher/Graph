@@ -18,7 +18,7 @@ public class Measurements {
                 nodes[j] = new Graph.Node(j+1, 1);
             }
             graph = new Graph(nodes);
-            while (graph.getNumNodes() < n) {
+            while (graph.getNumEdges() < n) {
                 node1 = rand.nextInt(n-1) + 1;
                 node2 = rand.nextInt(n-1) + 1;
                 graph.addEdge(node1, node2);
