@@ -182,7 +182,7 @@ public class Graph {
          */
         @Override
         public int getHash(Integer elem) {
-            return (this.a*elem + this.b)%this.p;
+            return Math.floorMod((this.a*elem + this.b),this.p);
         }
     }
 
@@ -207,7 +207,7 @@ public class Graph {
         }
 
         private DoublyLinkedList<HashTableNode> getChain(K key) {
-            int hash = getHashFunction().getHash(key)%getM();
+            int hash = Math.floorMod(getHashFunction().getHash(key),getM());
             return this.table.get(hash);
         }
 
@@ -694,7 +694,7 @@ public class Graph {
          * @complexity - O(1)
          */
         private boolean isLegal(int parentIndex, int childIndex) {
-            if (parentIndex == -1 && childIndex == -1) {
+            if (parentIndex == -1 || childIndex == -1) {
                 return true;
             }
             return this.getMinIndex(parentIndex, childIndex) == parentIndex;
