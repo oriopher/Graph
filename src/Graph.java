@@ -717,7 +717,7 @@ public class Graph {
          */
         private int getMinIndex(int index1, int index2) {
             int cmp = this.heap.get(index1).compareTo(this.heap.get(index2));
-            if (cmp < 0) {
+            if (cmp >= 0) {
                 return index2;
             }
             return index1;
