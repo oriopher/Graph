@@ -1,3 +1,5 @@
+import static org.junit.jupiter.api.Assertions.*;
+
 public class GraphTester {
 
     public static void main(String[] args) {
@@ -8,51 +10,54 @@ public class GraphTester {
     private static void testGraph() {
         Graph g = buildGraph();
 
-        assert g.getNumNodes() == 7;
-        assert g.getNumEdges() == 0;
+        assertEquals(g.getNumNodes(), 7);
+        assertEquals(g.getNumEdges(),0);
 
         // Add edges
-        assert g.addEdge(1,3);
-        assert g.addEdge(2,3);
-        assert g.addEdge(7,4);
-        assert g.addEdge(5,6);
-        assert g.addEdge(6,2);
-        assert g.addEdge(4,3);
-        assert !g.addEdge(4,17);
-        assert !g.addEdge(4,4);
+        assertTrue(g.addEdge(1,3));
+        assertTrue(g.addEdge(2,3));
+        assertTrue(g.addEdge(7,4));
+        assertTrue(g.addEdge(5,6));
+        assertTrue(g.addEdge(6,2));
+        assertTrue(g.addEdge(4,3));
+        assertFalse(g.addEdge(4,17));
+        assertFalse(g.addEdge(4,14));
 
-        assert (g.getNumEdges() == 6);
-        assert g.maxNeighborhoodWeight().getId() == 4;
-        assert g.getNeighborhoodWeight(5) == 49;
-        assert g.getNeighborhoodWeight(7) == 193;
+        assertEquals(g.getNumEdges(),6);
+        assertEquals(g.maxNeighborhoodWeight().getId(),4);
+        assertEquals(g.getNeighborhoodWeight(5), 49);
+        assertEquals(g.getNeighborhoodWeight(7), 193);
 
         g.deleteNode(4);
-        assert !g.addEdge(4, 1);
-        assert g.getNumNodes() == 6;
-        assert g.getNumEdges() == 4;
-        assert g.maxNeighborhoodWeight().getId() == 6;
+        assertFalse(g.addEdge(4,1));
+        assertEquals(g.getNumNodes(),6);
+        assertEquals(g.getNumEdges(),4);
+        assertEquals(g.maxNeighborhoodWeight().getId(),6);
 
-        assert g.addEdge(1, 2);
-        assert g.maxNeighborhoodWeight().getId() == 6;
-        assert g.getNeighborhoodWeight(2) == 44;
+        assertTrue(g.addEdge(1,2));
+        assertEquals(g.maxNeighborhoodWeight().getId(),6);
+        assertEquals(g.getNeighborhoodWeight(2), 44);
 
-        assert g.addEdge(2, 7);
-        assert g.maxNeighborhoodWeight().getId() == 2;
+        assertTrue(g.addEdge(2,7));
+        assertEquals(g.maxNeighborhoodWeight().getId(),2);
 
         g.deleteNode(2);
         g.deleteNode(3);
         g.deleteNode(5);
         g.deleteNode(6);
         g.deleteNode(7);
-        assert g.maxNeighborhoodWeight().getId() == 1;
-        assert g.getNeighborhoodWeight(1) == 8;
-        assert g.getNeighborhoodWeight(3) == -1;
-        assert g.getNumEdges() == 0;
+        assertEquals(g.maxNeighborhoodWeight().getId(),1);
+
+        assertEquals(g.getNeighborhoodWeight(1), 8);
+        assertEquals(g.getNeighborhoodWeight(3), -1);
+
+        assertEquals(g.getNumEdges(),0);
 
         g.deleteNode(1);
-        assert g.maxNeighborhoodWeight() == null;
-        assert g.getNumEdges() == 0;
-        assert g.getNumNodes() == 0;
+        assertNull(g.maxNeighborhoodWeight());
+        assertEquals(g.getNumEdges(),0);
+        assertEquals(g.getNumNodes(),0);
+
     }
 
     private static Graph buildGraph() {
