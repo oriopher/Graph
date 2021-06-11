@@ -629,6 +629,7 @@ public class Graph {
             this.deleteNode(index);
         }
 
+
         /**
          * Delete a node in a specified index.
          * @param index - The index of the node to delete.
@@ -636,10 +637,12 @@ public class Graph {
          */
         private void deleteNode(int index) {
             int lastElementIndex = this.getElementsCount() - 1;
-            this.heap.set(this.heap.get(lastElementIndex), index);
+            T node = this.heap.get(lastElementIndex);
+            this.heap.set(node, index);
+            node.setHeapIndex(index);
             this.heap.set(null, lastElementIndex);
+            this.decElementsCount();
             if (index != lastElementIndex) {
-                this.decElementsCount();
                 this.updateElementPos(index);
             }
         }
