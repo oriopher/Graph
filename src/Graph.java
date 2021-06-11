@@ -308,7 +308,7 @@ public class Graph {
         }
 
         /**
-         * Get the index of the element in the binery heap.
+         * Get the index of the element in the binary heap.
          * @return Index of the element in the binary heap.
          * @complexity - O(1)
          */
@@ -373,8 +373,8 @@ public class Graph {
         }
 
         /**
-         * Increse the total weight of the node.
-         * @param inc - Amount to increse.
+         * Increase the total weight of the node.
+         * @param inc - Amount to increase.
          * @complexity - O(1)
          */
         private void incTotalWeight(int inc) {
@@ -411,7 +411,7 @@ public class Graph {
         }
 
         /**
-         * Add the neighbouring relationsheep between two nodes.
+         * Add the neighbouring relationship between two nodes.
          * @param neighbours - Representation of this node and other node being neighbours.
          * @return - Pointer to the neighbours list node to this relation.
          * @complexity - O(1)
@@ -424,7 +424,7 @@ public class Graph {
         }
 
         /**
-         * Remove the neighbouring relationsheep between two nodes.
+         * Remove the neighbouring relationship between two nodes.
          * @param neighbours - Representation of this node and other node being neighbours.
          * @complexity - O(1)
          */
@@ -495,7 +495,7 @@ public class Graph {
 
     private interface BinaryHeapSelfIndex {
         /**
-         * Get the index of the element in the binery heap.
+         * Get the index of the element in the binary heap.
          * @return - Index of the element in the binary heap.
          */
         public int getHeapIndex();
@@ -697,10 +697,10 @@ public class Graph {
         }
 
         /**
-         * Checks if the realtionsheep between parent and child in heap satisfies the order relationsheep.
+         * Checks if the relationship between parent and child in heap satisfies the order relationship.
          * @param parentIndex - Index of parent node.
          * @param childIndex - Index of child node.
-         * @return - True if the relationsheep between parent and child is correct, otherwise false.
+         * @return - True if the relationship between parent and child is correct, otherwise false.
          * @complexity - O(1)
          */
         private boolean isLegal(int parentIndex, int childIndex) {
@@ -850,7 +850,7 @@ public class Graph {
         }
 
         /**
-         * Get the amout of cells in the vector.
+         * Get the amount of cells in the vector.
          * @return - The amount of cells in the vector.
          * @complexity - O(1)
          */
@@ -923,9 +923,9 @@ public class Graph {
                 throw new IndexOutOfBoundsException();
             }
             if (this.isInit(index)) {
-                Object valueOptinal = this.tArr[index];
+                Object valueOptional = this.tArr[index];
                 @SuppressWarnings("unchecked")
-                T value = valueOptinal != null ? (T)valueOptinal : null;
+                T value = valueOptional != null ? (T)valueOptional : null;
                 return value;
             }
             return this.getDefaultValue();
@@ -1046,7 +1046,7 @@ public class Graph {
         }
 
         /**
-         * Checks the validity of an index relativly to the list size.
+         * Checks the validity of an index relatively to the list size.
          * @complexity - O(1)
          */
         private boolean checkIndexValidity(int index) {
@@ -1056,7 +1056,7 @@ public class Graph {
         /**
          * Get the first node in the list that contains the value.
          * @param value - value to get its node
-         * @return - If value exists than retuns the node, otherwise null.
+         * @return - If value exists than returns the node, otherwise null.
          * @complexity - O(n)
          */
         private DoublyLinkedListNode getNode(T value) {
