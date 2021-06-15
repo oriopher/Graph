@@ -1,5 +1,4 @@
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -558,7 +557,7 @@ public class Graph {
 
         /**
          * Compare between two ExtendedNodes based on total weight from higher to lower.
-         * @other - Other node to compare to.
+         * @param other - Other node to compare to.
          * @complexity - O(1)
          */
         @Override
