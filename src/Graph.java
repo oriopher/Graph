@@ -415,15 +415,6 @@ public class Graph {
             }
 
             /**
-             * Set the value of a hash table node.
-             * @param value - the new value of the node.
-             * @complexity - O(1)
-             */
-            private void setValue(V value) {
-                this.value = value;
-            }
-
-            /**
              * Check if two hash table nodes are equal.
              * @param o - an object representing the other hash table node.
              * @return - true if o is a HashTableNode and its key is equal to the node's key. false otherwise.
@@ -637,19 +628,6 @@ public class Graph {
         }
 
         /**
-         * Get the pointer to the cell in the neighbour of the given node (the one relevant for the not not given) neighbours list.
-         * @param node - the node to get its neighbour's relevant pointer.
-         * @return - the pointer to the relevant cell in the neighbour of the given node's neighbours list.
-         * @complexity - O(1)
-         */
-        private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode getNeighbourNodePointer(ExtendedNode node) {
-            if (node.equals(this.node1))  {
-                return this.pointer2;
-            }
-            return this.pointer1;
-        }
-
-        /**
          * Get the neighbouring node of the given node.
          * @param node - the node to get its neighbour.
          * @return - the node in the NeighbouringNodes object that was not given.
@@ -737,7 +715,9 @@ public class Graph {
          * @param nodeIndex - The index of the node.
          * @return - The index of the node's parent. If this is the root, return -1.
          * @complexity - O(1)
+         *
          */
+        // TODO: DELETE!!!
         private int getParentIndex(int nodeIndex) {
             return this.getParentIndexRebaseRoot(nodeIndex, 0);
         }
@@ -916,6 +896,7 @@ public class Graph {
          * @param index - The index of the node to perform the bubble up on.
          * @complexity - O(log n)
          */
+        // TODO: DELETE!!!
         private void bubbleUp(int index) {
             this.bubbleUpRebaseRoot(index, 0);
         }
@@ -1329,6 +1310,7 @@ public class Graph {
          * @return - Node which contains the inserted value.
          * @complexity - O(min{index, n-index})
          */
+        // TODO: DELETE!!!
         public DoublyLinkedListNode insertAfter(T value, int index) {
             if (this.checkIndexValidity(index)) {
                 DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
@@ -1370,6 +1352,7 @@ public class Graph {
          * Delete the first value in the list. If list is empty then does nothing.
          * @complexity - O(1)
          */
+        // TODO: DELETE!!!
         public void deleteFirst() {
             this.deleteNode(this.getSentinel().getNext());
         }
@@ -1378,6 +1361,7 @@ public class Graph {
          * Delete the last value in the list. If list is empty then does nothing.
          * @complexity - O(1)
          */
+        // TODO: DELETE!!!
         public void deleteLast() {
             this.deleteNode(this.getSentinel().getPrev());
         }
@@ -1388,6 +1372,7 @@ public class Graph {
          * @param value - Value to delete from the list.
          * @complexity - O(n)
          */
+        // TODO: DELETE!!!
         public void deleteNode(T value) {
             DoublyLinkedListNode node = this.getNode(value);
             this.deleteNode(node);
@@ -1399,6 +1384,7 @@ public class Graph {
          * @param index - Index at which to delete the node.
          * @complexity - O(min{index, n-index})
          */
+        // TODO: DELETE!!!
         public void deleteNode(int index) {
             DoublyLinkedListNode node = this.getNode(index);
             this.deleteNode(node);
