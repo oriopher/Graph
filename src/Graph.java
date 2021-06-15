@@ -13,6 +13,11 @@ public class Graph {
     private int numNodes;
     private int numEdges;
 
+    /**
+     * Initializes a new Graph with a given list of nodes.
+     * @param nodes - an array of N nodes to initialize the graph with.
+     * @complexity - O(N)
+     */
     public Graph(Node[] nodes) {
         Vector<ExtendedNode> extendedNodes = nodesToExtendedNodes(nodes);
         int n = nodes.length;
@@ -23,6 +28,12 @@ public class Graph {
         this.setNumNodes(n);
     }
 
+    /**
+     * Convert an array of nodes to an array of extended nodes (create a new extended node from each node in the given array).
+     * @param nodes - an array of N nodes to extend.
+     * @return - a new Vector with the N extended nodes.
+     * @complexity - O(N)
+     */
     private Vector<ExtendedNode> nodesToExtendedNodes(Node[] nodes) {
         int n = nodes.length;
         ExtendedNode extendedNode;
@@ -34,6 +45,11 @@ public class Graph {
         return extendedNodes;
     }
 
+    /**
+     * insert the given nodes into the graphs hash table.
+     * @param nodes - a Vector of N extended nodes to insert to the graphs hash table.
+     * @complexity - O(N)
+     */
     private void initTable(Vector<ExtendedNode> nodes) {
         ExtendedNode node;
         for (int i = 0; i < nodes.getSize(); i++) {
@@ -42,6 +58,10 @@ public class Graph {
         }
     }
 
+    /**
+     * @return  - the Node in the graph that has the maximal neighborhood weight. return null if the graph is empty.
+     * @complexity - O(1)
+     */
     public Node maxNeighborhoodWeight() {
         ExtendedNode node = this.heap.getRoot();
         if (node == null) {
@@ -50,6 +70,12 @@ public class Graph {
         return node.getNode();
     }
 
+    /**
+     * Calculate the neighborhood weight of a given node.
+     * @param node_id - the ID of the node to Calculate its neighborhood weight.
+     * @return - the neighborhood weight of the node with the given ID, if exists in graph, else null.
+     * @complexity - O(1)
+     */
     public int getNeighborhoodWeight(int node_id) {
         ExtendedNode node = this.table.get(node_id);
         if (node == null) {
@@ -58,6 +84,14 @@ public class Graph {
         return node.getTotalWeight();
     }
 
+    /**
+     * Add to graph an edge between node_1 and node_2.
+     * @param node1_id - the ID of the first node in the new edge.
+     * @param node2_id - the ID of the second node in the new edge.
+     * @return true if a new edge was added to graph, false otherwise
+     * (if one of the node ID's is not in the graph, or they are the same nodes.
+     * @complexity - O(log n)
+     */
     public boolean addEdge(int node1_id, int node2_id) {
         ExtendedNode node1 = this.table.get(node1_id);
         ExtendedNode node2 = this.table.get(node2_id);
@@ -71,12 +105,24 @@ public class Graph {
         return true;
     }
 
+    /**
+     * Add a neighbour to a given node.
+     * @param node - the node to add the neighbour to.
+     * @param neighbours - the NeighbouringNodes object that includes the given node and its wanted new neighbour.
+     * @complexity - O(log n)
+     */
     private void addNeighbour(ExtendedNode node, NeighbouringNodes neighbours) {
         DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode nodePointer = node.addNeighbour(neighbours);
         this.heap.updateElementPos(node);
         neighbours.setPointer(node, nodePointer);
     }
 
+    /**
+     *  Delete a node from the graph.
+     * @param node_id - the ID of the node to delete.
+     * @return true if the node was deleted false otherwise (the node ID does not exist in the graph).
+     * @complexity - O((d_v + 1)*log n)
+     */
     public boolean deleteNode(int node_id) {
         ExtendedNode node = this.table.get(node_id);
         if (node == null) {
@@ -95,30 +141,60 @@ public class Graph {
         return true;
     }
 
+    /**
+     * @return - the number of nodes in the graph.
+     * @complexity - O(1)
+     */
     public int getNumNodes() {
         return this.numNodes;
     }
 
+    /**
+     * Change the numNodes field of the graph.
+     * @param numNodes - the new value for the numNodes field.
+     * @complexity - O(1)
+     */
     private void setNumNodes(int numNodes) {
         this.numNodes = numNodes;
     }
 
+    /**
+     * Decrement the numNodes field by 1.
+     * @complexity - O(1)
+     */
     private void decNumNodes() {
         this.setNumNodes(this.getNumNodes() - 1);
     }
 
+    /**
+     * @return - The number of edges in the graph.
+     * @complexity - O(1)
+     */
     public int getNumEdges() {
         return this.numEdges;
     }
 
+    /**
+     * Change the numEdges field of the graph.
+     * @param numEdges - the new value for the numEdges field.
+     * @complexity - O(1)
+     */
     private void setNumEdges(int numEdges) {
         this.numEdges = numEdges;
     }
 
+    /**
+     * Increment the numEdges field by 1.
+     * @complexity - O(1)
+     */
     private void incNumEdges() {
         this.setNumEdges(this.getNumEdges() + 1);
     }
 
+    /**
+     * Decrement the numEdges field by 1.
+     * @complexity - O(1)
+     */
     private void decNumEdges() {
         this.setNumEdges(this.getNumEdges() - 1);
     }
@@ -187,25 +263,56 @@ public class Graph {
     }
 
     private interface HashFunction<T> {
+
+        /**
+         * Calculates the hash value of a given element.
+         * @param elem - the element to operate the hash function on.
+         * @return - the result of operating the hash function on the element.
+         */
         public int getHash(T elem);
     }
 
     private class HashTable<K, V> {
         private final Vector<DoublyLinkedList<HashTableNode>> table;
 
-
         private final HashFunction<K> hashFunction;
-        private final int m;
+        private final int m; // the size of the table used by the hash table.
 
+        /**
+         * Initialize a new hash table.
+         * @param tableSize - the size of the hash tables table.
+         * @param hashFunction - the hash function used by the hash table.
+         * @complexity - O(1)
+         */
+        private HashTable(int tableSize, HashFunction<K> hashFunction) {
+            this.m = tableSize;
+            this.hashFunction = hashFunction;
+            this.table = new Vector<>(tableSize, null);
+        }
 
+        /**
+         * @return - the hash function instance used by the hash table.
+         * @complexity - O(1)
+         */
         private HashFunction<K> getHashFunction() {
             return this.hashFunction;
         }
 
+        /**
+         * @return - the m of the hash table (the size of the table).
+         * @complexity - O(1)
+         */
         private int getM() {
             return this.m;
         }
 
+        /**
+         * Get the chain the element with the given key is in.
+         * @param key - the key of the element to return the chain it is in.
+         * @return - the chain in the table's cell that is in the place of the hash of the given key.
+         * if the cell is empty a new linked list (empty list) will be returned.
+         * @complexity - O(1)
+         */
         private DoublyLinkedList<HashTableNode> getChain(K key) {
             int hash = Math.floorMod(getHashFunction().getHash(key),getM());
             DoublyLinkedList<HashTableNode> chain = this.table.get(hash);
@@ -216,18 +323,25 @@ public class Graph {
             return chain;
         }
 
-        private HashTable(int tableSize, HashFunction<K> hashFunction) {
-            this.m = tableSize;
-            this.hashFunction = hashFunction;
-            this.table = new Vector<>(tableSize, null);
-        }
 
+        /**
+         * Get the chains node that holds the element with the given key.
+         * @param key - the key of the element to get the chain node of.
+         * @return - the node in the chain of the element with the given key.
+         * @complexity - O(1)
+         */
         private DoublyLinkedList<HashTableNode>.DoublyLinkedListNode getNode(K key) {
             DoublyLinkedList<HashTableNode> chain = getChain(key);
             HashTableNode node = new HashTableNode(key);
             return chain.getNode(node);
         }
 
+        /**
+         * Insert a new element to the table, if it's key is not in the the table yet.
+         * @param key - the key of new element.
+         * @param value - the value of the new element.
+         * @complexity - O(1)
+         */
         private void insert(K key, V value) {
             DoublyLinkedList<HashTableNode>.DoublyLinkedListNode chainNode = getNode(key);
             if (chainNode == null) {
@@ -235,6 +349,11 @@ public class Graph {
             }
         }
 
+        /**
+         * Delete from the table the item with the given key.
+         * @param key - the key of the item to delete.
+         * @complexity - O(1)
+         */
         private void delete(K key) {
             DoublyLinkedList<HashTableNode>.DoublyLinkedListNode chainNode = getNode(key);
             if (chainNode != null) {
@@ -242,6 +361,12 @@ public class Graph {
             }
         }
 
+        /**
+         * Get the value of an item with the given key.
+         * @param key - the key of the wanted item.
+         * @return - the value of the wanted item. null - if there is no item with the given key in the table.
+         * @complexity - O(1)
+         */
         private V get(K key){
             DoublyLinkedList<HashTableNode>.DoublyLinkedListNode chainNode = getNode(key);
             if (chainNode != null) {
@@ -254,18 +379,57 @@ public class Graph {
             private final K key;
             private V value;
 
+            /**
+             * Initialize a new hash table node
+             * @param key - the key of the new node.
+             * @param value - the value of the new node.
+             * @complexity - O(1)
+             */
+            private HashTableNode(K key, V value) {
+                this.key = key;
+                this.value = value;
+            }
+
+            /**
+             * Initialize a new hash table node with only a key.
+             * @param key - the key of the new node.
+             * @complexity - O(1)
+             */
+            private HashTableNode(K key) {
+                this.key = key;
+            }
+
+            /**
+             * @return - the key of a hash table node.
+             * @complexity - O(1)
+             */
             private K getKey() {
                 return key;
             }
 
+            /**
+             * @return - the value of a hash table node.
+             * @complexity - O(1)
+             */
             private V getValue() {
                 return value;
             }
 
+            /**
+             * Set the value of a hash table node.
+             * @param value - the new value of the node.
+             * @complexity - O(1)
+             */
             private void setValue(V value) {
                 this.value = value;
             }
 
+            /**
+             * Check if two hash table nodes are equal.
+             * @param o - an object representing the other hash table node.
+             * @return - true if o is a HashTableNode and its key is equal to the node's key. false otherwise.
+             * @complexity - O(1)
+             */
             @Override
             public boolean equals(Object o) {
                 HashTableNode node;
@@ -277,14 +441,6 @@ public class Graph {
             }
 
 
-            private HashTableNode(K key, V value) {
-                this.key = key;
-                this.value = value;
-            }
-
-            private HashTableNode(K key) {
-                this.key = key;
-            }
         }
     }
 
@@ -455,7 +611,12 @@ public class Graph {
         private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode pointer1;
         private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode pointer2;
 
-
+        /**
+         * Initialize a new neighbouring node.
+         * @param node1 - the first node in the neighbouring node.
+         * @param node2 - the second node in the neighbouring node.
+         * @complexity - O(1)
+         */
         private NeighbouringNodes(ExtendedNode node1, ExtendedNode node2) {
             this.node1 = node1;
             this.node2 = node2;
@@ -463,6 +624,12 @@ public class Graph {
             this.pointer2 = null;
         }
 
+        /**
+         * Get the pointer to the cell in the given node neighbours list.
+         * @param node - the node to get its relevant pointer.
+         * @return - the pointer to the relevant cell in the given node's neighbours list.
+         * @complexity - O(1)
+         */
         private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode getNodePointer(ExtendedNode node) {
             if (node.equals(this.node1))  {
                 return this.pointer1;
@@ -470,6 +637,12 @@ public class Graph {
             return this.pointer2;
         }
 
+        /**
+         * Get the pointer to the cell in the neighbour of the given node (the one relevant for the not not given) neighbours list.
+         * @param node - the node to get its neighbour's relevant pointer.
+         * @return - the pointer to the relevant cell in the neighbour of the given node's neighbours list.
+         * @complexity - O(1)
+         */
         private DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode getNeighbourNodePointer(ExtendedNode node) {
             if (node.equals(this.node1))  {
                 return this.pointer2;
@@ -477,6 +650,12 @@ public class Graph {
             return this.pointer1;
         }
 
+        /**
+         * Get the neighbouring node of the given node.
+         * @param node - the node to get its neighbour.
+         * @return - the node in the NeighbouringNodes object that was not given.
+         * @complexity - O(1)
+         */
         private ExtendedNode getNeighbourNode(ExtendedNode node) {
             if (node.equals(this.node1))  {
                 return this.node2;
@@ -484,6 +663,12 @@ public class Graph {
             return this.node1;
         }
 
+        /**
+         * Set the pointer relevant for the given node.
+         * @param node - the node relevant to the pointer to set.
+         * @param pointer - the value to set for the relevant pointer field.
+         * @complexity - O(1)
+         */
         private void setPointer(ExtendedNode node, DoublyLinkedList<NeighbouringNodes>.DoublyLinkedListNode pointer) {
             if (node.equals(this.node1))  {
                 this.pointer1 = pointer;
