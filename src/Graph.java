@@ -94,7 +94,7 @@ public class Graph {
     public boolean addEdge(int node1_id, int node2_id) {
         ExtendedNode node1 = this.table.get(node1_id);
         ExtendedNode node2 = this.table.get(node2_id);
-        if (node1 == null || node2 == null || node1==node2) {
+        if (node1 == null || node2 == null || node1_id==node2_id) {
             return false;
         }
         NeighbouringNodes neighbours = new NeighbouringNodes(node1, node2);
