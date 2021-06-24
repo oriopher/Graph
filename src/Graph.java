@@ -1,3 +1,8 @@
+/**
+ * @author Asaf Harel, asafharel, 208945683
+ * @author Ori Opher, oriopher, 204805618
+ * */
+
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Function;
