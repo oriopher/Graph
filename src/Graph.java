@@ -5,7 +5,6 @@
 
 import java.util.Iterator;
 import java.util.Random;
-import java.util.function.Function;
 
 public class Graph {
 
@@ -716,18 +715,6 @@ public class Graph {
         }
 
         /**
-         * Get the index of the node's parent.
-         * @param nodeIndex - The index of the node.
-         * @return - The index of the node's parent. If this is the root, return -1.
-         * @complexity - O(1)
-         *
-         */
-        // TODO: DELETE!!!
-        private int getParentIndex(int nodeIndex) {
-            return this.getParentIndexRebaseRoot(nodeIndex, 0);
-        }
-
-        /**
          * Get the index of the node's parent, while taking only a subset of the heap.
          * @param nodeIndex - The index of the node.
          * @param rootIndex - The index of the root in the subset heap.
@@ -893,17 +880,6 @@ public class Graph {
                 return index2;
             }
             return index1;
-        }
-
-        /**
-         * Perform a bubble up operation of a node in the heap, from current
-         * location to correct location in the heap.
-         * @param index - The index of the node to perform the bubble up on.
-         * @complexity - O(log n)
-         */
-        // TODO: DELETE!!!
-        private void bubbleUp(int index) {
-            this.bubbleUpRebaseRoot(index, 0);
         }
 
         /**
@@ -1216,14 +1192,6 @@ public class Graph {
         }
 
         /**
-         * Checks the validity of an index relatively to the list size.
-         * @complexity - O(1)
-         */
-        private boolean checkIndexValidity(int index) {
-            return index < this.getSize() && index >= 0;
-        }
-
-        /**
          * Get the first node in the list that contains the value.
          * @param value - value to get its node
          * @return - If value exists than returns the node, otherwise null.
@@ -1239,31 +1207,6 @@ public class Graph {
                 node = node.getNext();
             }
             return null;
-        }
-
-        /**
-         * Get the node at a specific index.
-         * @param index - The index of the required node.
-         * @return - The node of the index if valid, otherwise null.
-         * @complexity - O(min{index, n-index})
-         */
-        private DoublyLinkedListNode getNode(int index) {
-            if (this.checkIndexValidity(index)) {
-                return null;
-            }
-            int reverseIndex = this.getSize() - 1 - index;
-            Function<DoublyLinkedListNode, DoublyLinkedListNode> func;
-            if (index <= reverseIndex) {
-                func = ((currentNode) -> (currentNode.getNext()));
-            }
-            else {
-                func = ((currentNode) -> (currentNode.getPrev()));
-            }
-            DoublyLinkedListNode node = func.apply(this.getSentinel());
-            for (int i = 0; i < Math.min(index, reverseIndex); i++) {
-                node = func.apply(node);
-            }
-            return node;
         }
 
         /**
@@ -1307,36 +1250,6 @@ public class Graph {
         private void insertLast(DoublyLinkedListNode node) {
             this.insertAfter(node, this.sentinel.getPrev());
         }
-
-        /**
-         * Insert a value to the list after an index. If index is invalid, then does nothing.
-         * @param value - Value to insert.
-         * @param index - The index after which to insert the value.
-         * @return - Node which contains the inserted value.
-         * @complexity - O(min{index, n-index})
-         */
-        // TODO: DELETE!!!
-        public DoublyLinkedListNode insertAfter(T value, int index) {
-            if (this.checkIndexValidity(index)) {
-                DoublyLinkedListNode node = new DoublyLinkedListNode(value, this);
-                this.insertAfter(node, index);
-                return node;
-            }
-            return null;
-        }
-
-        /**
-         * Insert a node to the list after an index. If index is invalid, then does nothing.
-         * @param node - Node to insert.
-         * @param index - The index after which to insert the node.
-         * @complexity - O(min{index, n-index})
-         */
-        private void insertAfter(DoublyLinkedListNode node, int index) {
-            if (this.checkIndexValidity(index)) {
-                DoublyLinkedListNode prev = this.getNode(index);
-                this.insertAfter(node, prev);
-            }
-        }
         
         /**
          * Insert a node to the list after a specified node.
@@ -1351,48 +1264,6 @@ public class Graph {
             node.setPrev(prev);
             node.setNext(next);
             this.incSize();
-        }
-
-        /**
-         * Delete the first value in the list. If list is empty then does nothing.
-         * @complexity - O(1)
-         */
-        // TODO: DELETE!!!
-        public void deleteFirst() {
-            this.deleteNode(this.getSentinel().getNext());
-        }
-
-        /**
-         * Delete the last value in the list. If list is empty then does nothing.
-         * @complexity - O(1)
-         */
-        // TODO: DELETE!!!
-        public void deleteLast() {
-            this.deleteNode(this.getSentinel().getPrev());
-        }
-
-        /**
-         * Delete the first node with a specific value.
-         * If the list doesn't contain the value, does nothing.
-         * @param value - Value to delete from the list.
-         * @complexity - O(n)
-         */
-        // TODO: DELETE!!!
-        public void deleteNode(T value) {
-            DoublyLinkedListNode node = this.getNode(value);
-            this.deleteNode(node);
-        }
-
-        /**
-         * Delete the node at a specified location.
-         * If location is invalid, then does nothing.
-         * @param index - Index at which to delete the node.
-         * @complexity - O(min{index, n-index})
-         */
-        // TODO: DELETE!!!
-        public void deleteNode(int index) {
-            DoublyLinkedListNode node = this.getNode(index);
-            this.deleteNode(node);
         }
 
         /**
